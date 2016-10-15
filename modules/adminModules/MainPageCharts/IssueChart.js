@@ -12,7 +12,7 @@ var issueClosedNow=[];
 var issueClosedLast=[];
 var dataOpenedLast=[], dataClosedLast=[], dataOpenedNow=[], dataClosedNow=[], dataLast=[], dataNow=[], data=[];
 var timeFrame;
-var week = new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday");
+var week = new Array("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday");
 var year = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec");
 
 export default React.createClass({
@@ -118,7 +118,7 @@ export default React.createClass({
         if(timeFrame == 30){
             var trim = "", str = " ", str1, num;
             for(var j = 0; j < timeFrame; j++){
-                num = j.toString();
+                num = (j+1).toString();
                 if(num.charAt(num.length-1) == '1'){
                     str1 = 'st';
                 }
@@ -157,8 +157,8 @@ export default React.createClass({
         dataLast = [{label:'closedLast', values:dataClosedLast}, {label:'openedLast', values:dataOpenedLast}];
         dataNow = [{label:'closedNow', values:dataClosedNow}, {label:'openedNow', values:dataOpenedNow}];
        // data = [{label:'last', values:dataLast}, {label:'now', values:dataNow}];
-        data = [{label:'last1', values:dataOpenedLast},{label:'last2', values:dataClosedLast}, 
-            {label:'now1', values:dataOpenedNow}, {label:'now2', values:dataClosedNow}];
+        data = [{label:'last1', values:dataOpenedNow},{label:'last2', values:dataClosedNow}, 
+            {label:'now1', values:dataOpenedLast}, {label:'now2', values:dataClosedLast}];
         dataOpenedLast = [];
         dataClosedLast = [];
         dataOpenedNow = [];
@@ -172,7 +172,7 @@ export default React.createClass({
                           data={data}
                           width={700}
                           height={250}
-                          margin={{top: 50, bottom: 20, left: 40, right: 30}}
+                          margin={{top: 40, bottom: 20, left: 40, right: 30}}
                           colorScale={colorScale}
                           xAxis={{innerTickSize: 1,outerTickSize: 0,className: "axis"}}
                           yAxis={{label: "times"}}

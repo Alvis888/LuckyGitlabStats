@@ -403,7 +403,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然周查询
             if (queryDays == 7)
             {
-                querySingleInfo.CommandText = " select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommitBeforeCompiling where DATEPART(wk, committime) = DATEPART(wk, getdate()) group by DATEPART(w, committime)";
+                querySingleInfo.CommandText = " SET DATEFIRST 1  select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommitBeforeCompiling where DATEPART(wk, committime) = DATEPART(wk, getdate()) group by DATEPART(w, committime)";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -533,7 +533,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然周查询
             if (queryDays == 7)
             {
-                querySingleInfo.CommandText = " select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommit where DATEPART(wk, committime) = DATEPART(wk, getdate()) group by DATEPART(w, committime)";
+                querySingleInfo.CommandText = " SET DATEFIRST 1  select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommit where DATEPART(wk, committime) = DATEPART(wk, getdate()) group by DATEPART(w, committime)";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -640,7 +640,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然周查询
             if (queryDays == 7)
             {
-                querySingleInfo.CommandText = " select DATEPART(w,starttime) as weekday,count(DATEPART(w,starttime)) as times from MemberIssue where DATEPART(wk, starttime) = DATEPART(wk, getdate()) and state='opened' group by DATEPART(w, starttime)";
+                querySingleInfo.CommandText = " SET DATEFIRST 1  select DATEPART(w,starttime) as weekday,count(DATEPART(w,starttime)) as times from MemberIssue where DATEPART(wk, starttime) = DATEPART(wk, getdate()) and state='opened' group by DATEPART(w, starttime)";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -746,7 +746,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然周查询
             if (queryDays == 7)
             {
-                querySingleInfo.CommandText = " select DATEPART(w,starttime) as weekday,count(DATEPART(w,starttime)) as times from MemberIssue where DATEPART(wk, starttime) = DATEPART(wk, getdate()) and state='opened' group by DATEPART(w, starttime)";
+                querySingleInfo.CommandText = " SET DATEFIRST 1  select DATEPART(w,starttime) as weekday,count(DATEPART(w,starttime)) as times from MemberIssue where DATEPART(wk, starttime) = DATEPART(wk, getdate()) and state='opened' group by DATEPART(w, starttime)";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())

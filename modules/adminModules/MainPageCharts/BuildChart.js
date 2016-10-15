@@ -12,7 +12,7 @@ var data=[];
 var dataLast=[];
 var dataNow=[];
 var timeFrame;
-var week = new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday");
+var week = new Array("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday");
 var year = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec");
 
 export default React.createClass({
@@ -80,7 +80,7 @@ export default React.createClass({
         if(timeFrame==30){
             var trim = "", str=" ", str1, num;
             for(var j = 0; j < timeFrame; j++){
-                num = j.toString();
+                num = (j+1).toString();
                 if(num.substr(-1) == '1'){
                     str1 = 'st';
                 }
@@ -110,7 +110,7 @@ export default React.createClass({
                 dataNow[j] = {x: year[j], y: buildNow[j]};
             }
         }
-        data = [{label:'somethingA', values:dataLast}, {label:'somethingB', values:dataNow}];
+        data = [{label:'somethingA', values:dataNow}, {label:'somethingB', values:dataLast}];
         dataLast = [];
         dataNow = [];
     },

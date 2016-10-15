@@ -18,15 +18,15 @@ var buildNowTotal, buildChange;
 var issueOpenedNow, issueOpenedChange, issueClosedChange;
 
 const style1 = {
-    width: 130,
-    fontSize: 18
+    width: 150,
+    fontSize: 15
 };
 
 export default React.createClass({
     getInitialState: function() {
         this.proGroUserTotal();                            //获取当前时间段内项目、小组、成员的数量
         timeFrame = sessionStorage.getItem('timeFrame');   //获取默认时间段：week
-        return {value: 1};                                 //设置DropDownMenu控件默认显示week
+        return {value: 1, newValue: 'Week'};                                 //设置DropDownMenu控件默认显示week
     },
     //当点击时间段变化时改变DropDownMenu控件显示的时间段
     timeFrameChange: function (event, index, value) {
@@ -313,12 +313,15 @@ export default React.createClass({
     },
     timeFrame7: function () {
         sessionStorage.setItem('timeFrame', 7);
+        this.setState({newValue: "Week"});
     },
     timeFrame30: function () {
         sessionStorage.setItem('timeFrame', 30);
+        this.setState({newValue: "Month"});
     },
     timeFrame365: function () {
         sessionStorage.setItem('timeFrame', 365);
+        this.setState({newValue: "Year"});
     },
     render(){
         return(
@@ -328,9 +331,9 @@ export default React.createClass({
                 </div>
                 <div id="mainPage_time">
                     <DropDownMenu style={style1} value={this.state.value} onChange={this.timeFrameChange}>
-                        <MenuItem value={1} primaryText="week" onClick={this.timeFrame7}><NavLink to="/mainpage"/></MenuItem>
-                        <MenuItem value={2} primaryText="month" onClick={this.timeFrame30}><NavLink to="/mainpage"/></MenuItem>
-                        <MenuItem value={3} primaryText="year" onClick={this.timeFrame365}><NavLink to="/mainpage"/></MenuItem>
+                        <MenuItem value={1} primaryText="this Week" onClick={this.timeFrame7}><NavLink to="/mainpage"/></MenuItem>
+                        <MenuItem value={2} primaryText="this Month" onClick={this.timeFrame30}><NavLink to="/mainpage"/></MenuItem>
+                        <MenuItem value={3} primaryText="this Year" onClick={this.timeFrame365}><NavLink to="/mainpage"/></MenuItem>
                     </DropDownMenu>
                 </div>
                 <div className="mainPage_part">
@@ -360,7 +363,15 @@ export default React.createClass({
                         <div className="mainPage_change">{commitChange}</div>
                         <div className="mainPage_partTwoNumber">{commitNowTotal}</div>
                     </div>
-                    <div className="mainPage_barChart"><CommitChart/></div>
+                    <div className="mainPage_barChart">
+                        <div>
+                            <div className="mainPage_now">this {this.state.newValue}:</div>
+                            <div className="mainPage_nowColor"></div>
+                            <div className="mainPage_last">last {this.state.newValue}:</div>
+                            <div className="mainPage_lastColor"></div>
+                        </div>
+                        <CommitChart/>
+                    </div>
                 </div>
                 <div className="mainPage_part">
                     <div className="mainPage_partTwoPaper">
@@ -368,7 +379,15 @@ export default React.createClass({
                         <div className="mainPage_change">{buildChange}</div>
                         <div className="mainPage_partTwoNumber">{buildNowTotal}</div>
                     </div>
-                    <div className="mainPage_barChart"><BuildChart/></div>
+                    <div className="mainPage_barChart">
+                        <div>
+                            <div className="mainPage_now">this {this.state.newValue}:</div>
+                            <div className="mainPage_nowColor"></div>
+                            <div className="mainPage_last">last {this.state.newValue}:</div>
+                            <div className="mainPage_lastColor"></div>
+                        </div>
+                        <BuildChart/>
+                    </div>
                 </div>
                 <div className="mainPage_part">
                     <div className="mainPage_partTwoPaper">
@@ -377,7 +396,21 @@ export default React.createClass({
                         <div className="mainPage_issueClosedChange">closed:{issueClosedChange}</div>
                         <div className="mainPage_partTwoNumber">{issueOpenedNow}</div>
                     </div>
-                    <div className="mainPage_barChart"><IssueChart/></div>
+                    <div className="mainPage_barChart">
+                        <div>
+                            <div className="mainPage_issueOpenedNow">this {this.state.newValue} Opened:</div>
+                            <div className="mainPage_issueOpenedNowColor"></div>
+                            <div className="mainPage_issueClosedNow">this {this.state.newValue} Closed:</div>
+                            <div className="mainPage_issueClosedNowColor"></div>
+                        </div>
+                        <div>
+                            <div className="mainPage_issueOpenedLast">last {this.state.newValue} Opened:</div>
+                            <div className="mainPage_issueOpenedLastColor"></div>
+                            <div className="mainPage_issueClosedLast">last {this.state.newValue} Closed:</div>
+                            <div className="mainPage_issueClosedLastColor"></div>
+                        </div>
+                        <IssueChart/>
+                    </div>
                 </div>
                 <div className="mainPage_divide"></div>
                 <div className="mainPage_part">

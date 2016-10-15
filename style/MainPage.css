@@ -23,7 +23,7 @@
     font-stretch: normal;
     font-size: 20px;
     line-height: 70px;
-    font-family: 微软雅黑;
+    font-family: "微软雅黑", Helvetica, Arial, sans-serif;
     white-space: nowrap;
     width: 100px;
     height: 40px;
@@ -47,18 +47,6 @@
     margin-left: auto;
     margin-right: auto;
     border:0.5px solid rgba(0,0,0,0.2);
-}
-.mainPage_text{
-    margin: auto 500px;
-    color: #FFFFFF;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: 100;
-    font-stretch: normal;
-    font-size: 28px;
-    line-height: 50px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    white-space:nowrap;
 }
 .mainPage_part{
     padding-left: 90px;
@@ -89,7 +77,6 @@
 }
 .mainPage_barChart{
     background: #ffffff;
-    padding: 0;
     width: 710px;
     height: 280px;
     margin-top: 40px;
@@ -130,7 +117,7 @@
 }
 .mainPage_issueClosedChange{
     margin-top: 18px;
-    margin-right: -81px;
+    margin-right: -77px;
     float: right;
     font-family: "微软雅黑", Helvetica, Arial, sans-serif;
     font-size: 17px;
@@ -162,39 +149,76 @@
 .mainPage_nav:link{
     text-decoration:none;
 }
-.mainPage_list{
-    margin-top: 40px;
-}
-.mainPage_ul{
-    margin-top: 40px;
-    margin-left: -25px;
-}
-.mainPage_ul li{
-    list-style-type:none;
-    background-color: white;
-    line-height: 50px;
-    padding-left: 15px;
-    font-family: "微软雅黑", Helvetica, Arial, sans-serif;
-    font-size: 15px;
-    color: black;
-}
-.mainPage_ul li:hover{
-    background-color: #E6E6E6;
-}
-.mainPage_tips{
-    background-color: #9E9E9E;
-    color: black;
-    width: 220px;
+.mainPage_now{
+    margin: 13px 0 -25px 440px;
     font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-    border-radius: 5px;
-    padding: 10px;
-    word-wrap:break-word;
-    word-break:break-all;
+    float: left;
 }
-.mainPage_first{
-    font-size: 17px;
-    font-weight: 600;
+.mainPage_nowColor{
+    margin: 15px 0 -25px 5px;
+    height: 15px;
+    width: 30px;
+    background-color: #1F77B4;
+    float: left;
 }
-.mainPage_project{
-    margin-left: 62px;
+.mainPage_last{
+    margin: 13px 0 -25px 20px;
+    font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    float: left;
 }
+.mainPage_lastColor{
+    margin: 15px 0 -25px 5px;
+    height: 15px;
+    width: 30px;
+    background-color: #AEC7E8;
+    float: left;
+}
+.mainPage_issueOpenedNow{
+    margin: 8px 0 -25px 330px;
+    font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    float: left;
+}
+.mainPage_issueOpenedNowColor{
+    margin: 14px 0 -25px 5px;
+    height: 10px;
+    width: 30px;
+    background-color: #1F77B4;
+    float: left;
+}
+.mainPage_issueClosedNow{
+    margin: 8px 0 -25px 60px;
+    font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    float: left;
+}
+.mainPage_issueClosedNowColor{
+    margin: 14px 0 -25px 5px;
+    height: 10px;
+    width: 30px;
+    background-color: #AEC7E8;
+    float: left;
+}
+.mainPage_issueOpenedLast{
+    margin: 20px 0 -25px 330px;
+    font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    float: left;
+}
+.mainPage_issueOpenedLastColor{
+    margin: 26px 0 -25px 5px;
+    height: 10px;
+    width: 30px;
+    background-color: #FE7F0F;
+    float: left;
+}
+.mainPage_issueClosedLast{
+    margin: 20px 0 -25px 25px;
+    font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    float: left;
+}
+.mainPage_issueClosedLastColor{
+    margin: 26px 0 -25px 5px;
+    height: 10px;
+    width: 30px;
+    background-color: #FFBB78;
+    float: left;
+}
+

@@ -335,11 +335,11 @@ namespace LuckyGitlabStatWebAPI.Controllers
 
                 smtpClient.Host = "smtp.qq.com";//指定SMTP服务器        
 
-                smtpClient.Credentials = new System.Net.NetworkCredential("1312373957@qq.com", "ccfknzwurpfjjhic");//用户名和授权码
+                smtpClient.Credentials = new System.Net.NetworkCredential("from@hostq.com", "ccfknzwurpfjjhic");//用户名和授权码
 
                 // 发送邮件设置        
 
-                MailMessage mailMessage = new MailMessage("1312373957@qq.com", email); // 发送人和收件人        
+                MailMessage mailMessage = new MailMessage("from@host.com", email); // 发送人和收件人        
 
                 mailMessage.Subject = "密码找回";//主题        
 
