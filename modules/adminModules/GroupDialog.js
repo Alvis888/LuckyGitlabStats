@@ -4,19 +4,19 @@
 
 import React from 'react';
 import Dialog from 'material-ui/lib/Dialog';
-import RaisedButton from 'material-ui/lib/raised-button';
 import TextField from 'material-ui/lib/text-field';
 import Select from 'react-select';
-import MenuItem from 'material-ui/lib/menu';
 import FlatButton from 'material-ui/lib/flat-button';
 import NavLink from '../NavLink'
-/**/
-var resultAll = [];
-var resultSearch = [];
-var monitorname = [];
-var membername=[];
-var resultUsername=[];
+
+var resultAll = [];//所有的user信息
+var resultSearch = [];//userName选项数组
+var monitorname = [];//选中的组长
+var membername=[];//选中的组员
+var resultUsername=[];//所有的username
 var result="false";
+var alertText;
+
 
 
 export default React.createClass({
@@ -25,6 +25,7 @@ export default React.createClass({
     propTypes: {
         label: React.PropTypes.string,
     },
+    //初始化组件
     getInitialState: function () {
         return {
             options: [], projectMembers: [],
@@ -35,29 +36,24 @@ export default React.createClass({
             monitor:[],
             member:[],
             groupname:null,
+            test_groupName:null,
         };
     },
-
+    //渲染组件的准备
     componentWillMount: function () {
         this.userListGet();
         this.username();
         this.searchforeach();
         this.setState({options:resultSearch});
     },
-
    
-    handleOpenForProject :function (){
-        this.setState({newProject:true});
-    },
+    //打开New Group Dialog
     handleOpenForGroup :function (){
         this.setState({newGroup:true});
     },
-    handleOpenForUser :function (){
-        this.setState({newUser:true});
-    },
+    //关闭New Group Dialog
     handleClose :function (){
         /*if判断*/
-
         if(this.state.newGroup==true)
         {
             this.setState({newGroup:false});
@@ -66,22 +62,27 @@ export default React.createClass({
         }
 
     },
-    //输入框
+    //输入框onChange事件
     handleChange: function (event) {
         this.setState({groupname: event.target.value});
+        /*
+        * 如果输入的有值，则不提示*/
+        if(this.state.groupname){
+            this.setState({test_groupName:""});
+        }
     },
-   
+    //groupMonitor select框onChange事件
     handleSelectGroupMonitor :function(groupMonitor) {
         this.setState({ groupMonitor });
-        monitorname=groupMonitor.split(",");
+        monitorname=groupMonitor;
 
-    }
-    ,
+    },
+    //groupMembers select框onChange事件
     handleSelectGroupMembers :function(groupMembers) {
         this.setState({ groupMembers });
-        membername=groupMembers.split(",");
+        membername=groupMembers;
     },
-
+    //获取所有user信息
     userListGet: function () {
         $.ajax({
             url:'http://202.196.96.79:1500/api/Root/GetAllUserInfo',
@@ -93,55 +94,74 @@ export default React.createClass({
                 resultAll = data;
             },
             error : function() {
-                alert("userListGet failed to get data!");
+                alert("Error in program!");
             }
         });
     },
+    //获取所有username
     username:function () {
         var i=0;
+        var j=0;
         for(;i<resultAll.length;i++){
-            resultUsername[i]=resultAll[i].username;
+            if(resultAll[i].isdelete=="False"){
+            resultUsername[j]=resultAll[i].username;
+                j++;
+            }
         }
     },
+    //username选项数组
     searchforeach:function () {
         var i = 0;
-        for(;i<resultAll.length;i++){
-            resultSearch[i] = {label:resultUsername[i],value:resultUsername[i]}
+        for(;i<resultUsername.length;i++){
+            resultSearch[i] = {label:resultUsername[i],value:resultUsername[i]};
         }
     },
-
+    //新建组
     postGroupInfo:function () {
         var group={
-            groupname:this.state.groupname,
-            groupmonitor:monitorname,
-            groupmembers:membername
+            GroupName:this.state.groupname,
+            GroupMonitor:monitorname,
+            GroupMembers:membername
         };
+        /*
+        * GroupName为空时，提示为空且不与后台交互*/
+        if(!this.state.groupname){
+            this.setState({test_groupName:"*Not null"});
+        }
+        if(this.state.groupname){
         $.ajax({
-            url:"http:///10.12.51.110:1500/api/Root/PostNewGroup",
-            data: JSON.stringify(group),
+            url:"http://202.196.96.79:1500/api/Root/PostNewGroup",
+            data:JSON.stringify(group),
             contentType:"application/json",
             type:"post",
             cache:false,
             async:false,
             dataType:"json",
             success:function(data){
-                alert(data);
+                if(data=="成功"){
+                alert("Add a new group successfully!");
                 sessionStorage.setItem('result',"success");
+                }
+                if(data=="组名已存在"){
+                    alert("Group name already exists!");
+                }
             },
             error: function () {
-                alert("Error in program operation!");
+                alert("Error in program!");
             }
         });
         this.handleClose();
+        }
+
     },
     render() {
+        {/*new group buttons*/}
         const actions = [
            <NavLink to="grouplist">
                <FlatButton
                 label="Submit"
                 primary={true}
-                keyboardFocused={true}
-                onClick={this.postGroupInfo}
+                onTouchTap={this.postGroupInfo}
             />
            </NavLink>,
             <FlatButton
@@ -152,11 +172,9 @@ export default React.createClass({
         ];
         return (
             <div >
+                {/*New Group Button*/}
                 <a id="Dialog_btn" onClick={this.handleOpenForGroup} >New Group</a>
-
-
-
-                {/*new Group*/}
+                {/*new Group Dialog*/}
                 <Dialog
                     actions={actions}
                     modal={false}
@@ -167,10 +185,12 @@ export default React.createClass({
 
                     </div>
                     <div id="textField">
-                        <TextField id="textFieldOne"
+                        <TextField id="textFieldProNew"
                                    hintText="GroupName"
                                    onChange={this.handleChange}
-                        /><br/><br/>
+                        />
+                        <div id="groupDia_groupName" dangerouslySetInnerHTML={{__html: this.state.test_groupName}}></div>
+                        <br/><br/>
                         <div className="section">
                             <h3 className="section-heading">{this.props.label}</h3>
                             <Select multi simpleValue  value={this.state.groupMonitor}  options={this.state.options} placeholder="Select Monitor" onChange={this.handleSelectGroupMonitor} />

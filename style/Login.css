@@ -34,12 +34,13 @@
     font-size: 33px;
     color: #40434B;
     text-align: center;
-    margin-top: 13px;
+    margin-top: 23px;
 }
 #login_textField{
-    margin-top: 3px;
+    margin-top: 30px;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 10px;
     text-align: center;
 }
 #login_forget{
@@ -52,7 +53,7 @@
     font-family: Cambria;
 }
 #login_button{
-    margin-top: 15px;
+    margin-top: 25px;
     text-align: center;
 }
 .login_error{

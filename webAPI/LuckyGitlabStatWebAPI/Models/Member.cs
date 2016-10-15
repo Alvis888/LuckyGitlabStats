@@ -30,6 +30,10 @@ namespace LuckyGitlabStatWebAPI.Models
         /// <summary>
         /// 组名
         /// </summary>
-        public string gropuName { set; get; }
+        public string groupName { set; get; }
+        /// <summary>
+        /// 是否已经能够被删除
+        /// </summary>
+        public string isdelete { set; get; }
     }
 }

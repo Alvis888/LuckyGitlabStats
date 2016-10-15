@@ -3,6 +3,7 @@ using LuckyGitlabStatWebAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -21,10 +22,16 @@ namespace LuckyGitlabStatWebAPI.Controllers
         string sendInfo;
         //用户密码
         string password;
-        Member member = new Member();
         ConnectDB conncetdb = new ConnectDB();
         ConnectLocalSQL connectLocaldb = new ConnectLocalSQL();
         bool flag;
+        public CommonController()
+        {
+            /*Empty*/
+        }
+        #region MyRegion
+
+
         /// <summary>
         /// 检查用户是否已经注册/存在异常
         /// </summary>
@@ -33,6 +40,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <returns>false 未注册</returns>
         public bool GetCheckUser(string username)
         {
+            Member member = new Member();
             //连接本地数据库
             SqlConnection conn = connectLocaldb.ConnectDataBase();
             //打开数据库
@@ -103,6 +111,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <returns>true/false</returns>
         public bool GetLoginCheck(string username, string password)
         {
+            Member member = new Member();
             if (GetCheckUser(username))//检查是否已被注册
             {
                 try
@@ -182,6 +191,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <returns>返回管理员级别</returns>
         public int GetLoginCheckWithRank(string username, string password)
         {
+            Member member = new Member();
             //表示无法登陆
             int returnNumber = 0;
             if (GetCheckUser(username))//检查是否已被注册
@@ -263,6 +273,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <returns></returns>
         public string GetSendpassrord(string username,string email)
         {
+            Member member = new Member();
             if (GetCheckUser(username))//检查是否已被注册
             {
                 try
@@ -324,11 +335,11 @@ namespace LuckyGitlabStatWebAPI.Controllers
 
                 smtpClient.Host = "smtp.qq.com";//指定SMTP服务器        
 
-                smtpClient.Credentials = new System.Net.NetworkCredential("from@qq.com", "pin");//用户名和授权码
+                smtpClient.Credentials = new System.Net.NetworkCredential("1312373957@qq.com", "ccfknzwurpfjjhic");//用户名和授权码
 
                 // 发送邮件设置        
 
-                MailMessage mailMessage = new MailMessage("from@qq.com", email); // 发送人和收件人        
+                MailMessage mailMessage = new MailMessage("1312373957@qq.com", email); // 发送人和收件人        
 
                 mailMessage.Subject = "密码找回";//主题        
 
@@ -347,6 +358,47 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 sendInfo = "发送失败";
             }
             return sendInfo;
+        }
+        #endregion
+        /// <summary>
+        /// 获取程序版本号
+        /// </summary>
+        /// <returns></returns>
+        public string GetProjectVersion()
+        {
+            string ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            return ver.Substring(0,5);
+        }
+        /// <summary>
+        /// 修改用户信息
+        /// </summary>
+        /// <param name="username">用户名</param>
+        /// <param name="password">密码</param>
+        /// <param name="email">邮箱地址</param>
+        /// <returns></returns>
+        public string GetUpdateUserInfo(string username,string password,string email)
+        {
+            string returnInfo = null;
+            try
+            {
+                SqlConnection conn = connectLocaldb.ConnectDataBase();
+                conn.Open();
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "update Member set Password=" + "'" + password + "',Email=" + "'" + email + "' where username=" + "'" + username + "'";
+                cmd.ExecuteNonQuery();
+                flag = true;
+                returnInfo += "更新成功";
+            }
+            catch (SqlException e)
+            {
+                flag = false;
+                FileStream fs = new FileStream("c:\\text\\log2.txt", FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(fs); // 创建写入流
+                sw.WriteLine(e.ToString()); // 写入
+                sw.Close();
+                returnInfo += "更新异常";
+            }
+            return returnInfo;
         }
     }
 }

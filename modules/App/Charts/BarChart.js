@@ -10,13 +10,12 @@ var resultSuccess=[];
 var dataFail=[];
 var dataSuccess=[];
 var data=[];
-var username,oldDays;
+var username, oldDays;
 
 export default React.createClass({
     getInitialState: function () {
         username = sessionStorage.getItem('username');
         oldDays = sessionStorage.getItem('days');
-        alert('days: '+oldDays);
         return null;
     },
     componentWillMount: function () {
@@ -33,8 +32,9 @@ export default React.createClass({
     },
     //获取个人每天编译总次数
     dataGetTotal: function () {
+        
         $.ajax({
-            url:'http://202.196.96.79:1500/api/Single/GetBUildTotal_personally_ByLongTime',
+            url:'http://202.196.96.79:1500/api/Single/GetPersonBuildByDays',
             data:{username: username, queryDays:  oldDays},
             type:"get",
             cache:false,
@@ -44,14 +44,14 @@ export default React.createClass({
                 resultTotal = data;
             },
             error : function() {
-                alert("dataGetTotal异常！");
+                alert("Error in dataGetTotal");
             }
         });
     },
     //获取个人每天编译成功次数
     dataGetSuccess: function () {
         $.ajax({
-            url:'http://202.196.96.79:1500/api/Single/GetSuccessTotal_Personally_ByDay',
+            url:'http://202.196.96.79:1500/api/Single/GetPersonBuildSuccessByDays',
             data:{username: username, queryDays: oldDays},
             type:"get",
             cache:false,
@@ -61,7 +61,7 @@ export default React.createClass({
                 resultSuccess=data;
             },
             error : function() {
-                alert("dataGetSuccess异常！");
+                alert("Error in dataGetSuccess！");
             }
         });
     },
@@ -80,90 +80,99 @@ export default React.createClass({
         }
         var positiveDate = inverseDate.reverse();
              //将获取的时间反转
-        if(oldDays==7){
-            for(var j = 0; j < oldDays; j++){
-                dataSuccess[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,10), y: resultSuccess[j]};
-                dataFail[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,10), y: resultTotal[j]-resultSuccess[j]};
+          if (oldDays == 7 || oldDays == 15) {
+            for (let p = 0; p < oldDays; p++) {
+                dataSuccess[p] = {x: new Date(positiveDate[p]).toDateString().substring(4, 10), y: 0};
+                dataFail[p] = {x: new Date(positiveDate[p]).toDateString().substring(4, 15), y: 0};
             }
-         }
-        if(oldDays==15){
-
-            for(var j = 0; j < oldDays; j++){
-                dataSuccess[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,10), y: resultSuccess[j]};
-                dataFail[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,10), y: resultTotal[j]-resultSuccess[j]};
-            }
-         }
-        if(oldDays==30){
+        }
+       
+       if (oldDays == 30) {
             var j = 0;
-            var str=" ";
-            var trim="";
-            for(; j < oldDays; j++){
-                if((j+1)%2==0){
-                    dataSuccess[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,10), y: resultSuccess[j]};
-                    dataFail[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,10), y:resultTotal[j]-resultSuccess[j]};
+            var str = " ";
+            var trim = "";
+
+            for (; j < oldDays; j++) {
+                if ((j + 1) % 2 == 0) {
+                    dataSuccess[j] = {x: new Date(positiveDate[j]).toDateString().substring(4, 10), y: 0};
+                    dataFail[j] = {x: new Date(positiveDate[j]).toDateString().substring(4, 10), y: 0};
                 }
-                else{
-                    trim=trim+str;
-
-                    dataSuccess[j] = {x:trim, y: resultSuccess[j]};
-                    dataFail[j] = {x:trim, y: resultTotal[j]-resultSuccess[j]};
+                else {
+                    trim = trim + str;
+                    dataSuccess[j] = {x: trim, y: 0};
+                    dataFail[j] = {x: trim, y: 0};
 
                 }
+            }
         }
+        if (oldDays == 60) {
+            var j = 0;
+            var str = " ";
+            var trim = "";
+            for (; j < oldDays; j++) {
+                if ((j + 1) % 4 == 0) {
+                    dataSuccess[j] = {x: new Date(positiveDate[j]).toDateString().substring(4, 10), y: 0};
+                    dataFail[j] = {x: new Date(positiveDate[j]).toDateString().substring(4, 10), y: 0};
+                }
+                else {
+                    trim = trim + str;
+                    dataSuccess[j] = {x: trim, y: 0};
+                    dataFail[j] = {x: trim, y: 0};
+                }
+            }
         }
-        if(oldDays==60){
-             var j = 0;
-             var str=" ";
-             var trim="";
-             for(; j < oldDays; j++){
-                 if((j+1)%4==0){
-                     dataSuccess[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,10), y: resultSuccess[j]};
-                     dataFail[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,10), y:resultTotal[j]-resultSuccess[j]};
-                 }
-                 else{
-                     trim=trim+str;
-                     dataSuccess[j] = {x:trim, y: resultSuccess[j]};
-                     dataFail[j] = {x:trim, y: resultTotal[j]-resultSuccess[j]};
-                 }
-             }
-         }
-        if(oldDays==120){
-             var j = 0;
-             var str=" ";
-             var trim="";
-             for(; j < oldDays; j++){
-                 if((j+1)%8==0){
-                     dataSuccess[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,10), y: resultSuccess[j]};
-                     dataFail[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,10), y:resultTotal[j]-resultSuccess[j]};
-                 }
-                 else{
-                     trim=trim+str;
+       if (oldDays == 120) {
+            var j = 0;
+            var str = " ";
+            var trim = "";
+            for (; j < oldDays; j++) {
+                if ((j + 1) % 8 == 0) {
+                    dataSuccess[j] = {x: new Date(positiveDate[j]).toDateString().substring(4, 10), y: 0};
+                    dataFail[j] = {x: new Date(positiveDate[j]).toDateString().substring(4, 10), y: 0};
+                }
+                else {
+                    trim = trim + str;
+                    dataSuccess[j] = {x: trim, y: 0};
+                    dataFail[j] = {x: trim, y: 0};
 
-                     dataSuccess[j] = {x:trim, y: resultSuccess[j]};
-                     dataFail[j] = {x:trim, y: resultTotal[j]-resultSuccess[j]};
-
-                 }
-             }
-         }
-        if(oldDays==180){
-             var j = 0;
-             var str=" ";
-             var trim="";
-             for(; j < oldDays; j++){
-                 if(new Date(positiveDate[j]).toDateString().substring(8,10)=="01"){
-                     dataSuccess[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,8), y: resultSuccess[j]};
-                     dataFail[j] = {x: new Date(positiveDate[j]).toDateString().substring(4,8), y:resultTotal[j]-resultSuccess[j]};
-                 }
-                 else{
-                     trim=trim+str;
-                     dataSuccess[j] = {x:trim, y: resultSuccess[j]};
-                     dataFail[j] = {x:trim, y: resultTotal[j]-resultSuccess[j]};
-                 }
-             }
-         }
-         data=[{label: 'somethingA',values: dataSuccess}, {label: 'somethingB',values: dataFail}];
-        dataSuccess=[];
-        dataFail=[];
+                }
+            }
+        }
+        if (oldDays == 180) {
+            var j = 0;
+            var str = " ";
+            var trim = "";
+            for (; j < oldDays; j++) {
+                if (new Date(positiveDate[j]).toDateString().substring(8, 10) == "01") {
+                    dataSuccess[j] = {
+                        x: new Date(positiveDate[j]).toDateString().substring(4, 8),
+                        y: 0
+                    };
+                    dataFail[j] = {
+                        x: new Date(positiveDate[j]).toDateString().substring(4, 8),
+                        y: 0
+                    };
+                }
+                else {
+                    trim = trim + str;
+                    dataSuccess[j] = {x: trim, y: 0};
+                    dataFail[j] = {x: trim, y: 0};
+                }
+            }
+        }
+        //通过对比时间戳，对的数据赋值
+        for (let i in dataSuccess) {
+         //   alert("i=" + dataSuccess[i].x)
+            for (let k in resultSuccess) {
+                if (positiveDate[i] == k) {
+                    dataSuccess[i].y = resultSuccess[k]
+                    dataFail[i].y = resultTotal[k] - resultSuccess[k]
+                }
+            }
+        }
+        data = [{label: 'somethingA', values: dataSuccess}, {label: 'somethingB', values: dataFail}];
+        dataSuccess = [];
+        dataFail = [];
     },
 
     render(){

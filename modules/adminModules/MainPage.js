@@ -17,51 +17,45 @@ import Layer from './layer/layer'
 import FlatButton from 'material-ui/lib/flat-button';
 import AppBar from 'material-ui/lib/app-bar';
 
-var groupAll = [], userAll=[], userCommit;
+var groupAll = [], userAll=[], userCommit = [];
 var resultProject = [], resultGroup = [], resultUsername = [];
-var groupProject;
 var order=[];
-var newArray=[];
-var projectMember,projectMembersCommit;
 var projectAll = [];
-var projectNumber, groupNumber, userNumber;
-var projectCommitChange;
+var proNumber = 0, groNumber = 0, userNumber = 0;
 
 export default React.createClass({
     getInitialState: function() {
-        this.projectCommitChange();
         return {project: null, group: null, user: null};
     },
-    projectMouseOver: function (i) {
-        this.projectMembersCommit(resultProject[i]);
+  /*  projectMouseOver: function (i) {
+     //   this.projectMember(resultProject[i]);
+       // this.projectMembersCommit(resultProject[i]);
         var htmlProject = "";
-        htmlProject = "<div class='mainPage_tips'>"+"<div class='mainPage_first'>"+resultProject[i]+"</div>"
+      /*  htmlProject = "<div class='mainPage_tips'>"+"<div class='mainPage_first'>"+resultProject[i]+"</div>"
             +"Monitor:"+projectAll[i].projectMonitor+"<br/>"
             +"Members:"+projectAll[i].projectMembers+"<br/>"
-            +"Commit:"+projectMembersCommit+"</div>";
-        $('#project_'+i).mouseover(function()
+            +"</div>";*/
+  /*      $('#project_'+i).mouseover(function()
         {
-            layer.tips(htmlProject, '#project_'+i, {time: 900000});
+            layer.tips(resultProject[i], '#project_'+i, {time: 900000});
         });
-        projectMembersCommit = "";
     },
     groupMouseOver: function (i) {
-        this.groupProject(resultGroup[i]);
+     //   this.groupProject(resultGroup[i]);
         var htmlGroup = "";
         htmlGroup = "<div class='mainPage_tips'><div class='mainPage_first'>"+resultGroup[i]+"</div>"
             +"Monitor:"+groupAll[i].GroupMonitor+"<br/>"
             +"Members:"+groupAll[i].GroupMembers+"<br/>"
-            +"Project:"+groupProject+"</div>";
+            +"Project:"+"babycare&nbsp;..."+"</div>";
         $('#group_'+i).mouseover(function()
         {
             layer.tips(htmlGroup, '#group_'+i, {time: 900000});
         });
     },
     userMouseOver: function (i) {
+        //this.userCommit(resultUsername[i]);
         var htmlUser = "";
         var sex = "";
-        userCommit = "";
-        this.userCommit(resultUsername[i]);
         if(userAll[i].sex == "False") {
             sex = 'female';
         }
@@ -70,8 +64,7 @@ export default React.createClass({
         htmlUser = "<div class='mainPage_tips'><div class='mainPage_first'>"+resultUsername[i]+"</div>"
             +"sex:"+sex+"<br/>"
             +"group:"+userAll[i].groupName+"<br/>"
-          //  +"project:"+"fundbook&nbsp;12"+"<br/>"+"<div class='mainPage_project'>"+"LuckyGitlabStats&nbsp;17"+"</div>"+"</div>";
-            +"Commit:"+userCommit;
+            +"project:"+"fundbook&nbsp;12"+"<br/>"+"<div class='mainPage_project'>"+"LuckyGitlabStats&nbsp;17"+"</div>"+"</div>";
         /*  setTimeout((i)=>{this.output(i)},2000);
            function output(i) {
             $('#user_'+i).mouseover(function()
@@ -79,7 +72,7 @@ export default React.createClass({
                 layer.tips(html, '#user_'+i, {time: 900000});
             });
         }*/
-        $('#user_'+i).mouseover(function()
+    /*    $('#user_'+i).mouseover(function()
         {
             layer.tips(htmlUser, '#user_'+i, {time: 900000});
         });
@@ -103,7 +96,7 @@ export default React.createClass({
         {
             layer.tips('', '#user_'+i);
         });
-    },
+    },*/
     componentWillMount: function () {
         this.listGet();
         this.set();
@@ -112,23 +105,6 @@ export default React.createClass({
         this.setState({project: resultProject});
         this.setState({group: resultGroup});
         this.setState({user: resultUsername});
-    },
-    projectCommitChange: function () {
-        $.ajax({
-            url:'http://10.12.51.142:1500/api/AllMembers/GetCommitAddThanYesday',
-            type:"get",
-            cache:false,
-            async: false,
-            dataType:'json',
-            success: function (data) {
-                projectCommitChange = data;
-                console.log("projectCommitChange");
-                console.log(projectCommitChange)
-            },
-            error : function() {
-                alert("projectCommitChange failed to get data!");
-            }
-        });
     },
     listGet: function () {
         //get project list
@@ -139,24 +115,23 @@ export default React.createClass({
             async: false,
             dataType:'json',
             success: function (data) {
-                projectNumber = data.length;
-                console.log("projectlist");
-                console.log(data);
-                if(data.length > 5) {
-                    for (var i = 0; i < 5; i++) {
-                        projectAll[i] = data[i];
-                        resultProject[i] = data[i].projectName;
+                proNumber = 0;
+                for(var i = 0, j = 0; i < data.length; i++){
+                    if(data[i].isDelete == false){
+                        proNumber++;
+                        if(j < 5){
+                            projectAll[i] = data[i];
+                            resultProject[j] = data[i].projectName;
+                            j++;
+                        }
                     }
-                }
-                else{
-                    for (var i = 0; i < data.length; i++) {
-                        projectAll[i] = data[i];
-                        resultProject[i] = data[i].projectName;
+                    else{
+                        continue;
                     }
                 }
             },
             error : function() {
-                alert("projectListGet failed to get data!");
+                alert("failed to get number of project!");
             }
         });
         //get group list
@@ -167,24 +142,23 @@ export default React.createClass({
             async: false,
             dataType:'json',
             success: function (data) {
-                groupNumber = data.length;
-                console.log("grouplist");
-                console.log(data);
-                if(data.length > 5) {
-                    for (var i = 0; i < 5; i++) {
-                        groupAll[i] = data[i];
-                        resultGroup[i] = data[i].GroupName;
+                groNumber = 0;
+                for(var i = 0, j = 0; i < data.length; i++){
+                    if(data[i].isDelete == false){
+                        groNumber++;
+                        if(j < 5){
+                            groupAll[i] = data[i];
+                            resultGroup[j] = data[i].GroupName;
+                            j++;
+                        }
                     }
-                }
-                else{
-                    for (var i = 0; i < data.length; i++) {
-                        groupAll[i] = data[i];
-                        resultGroup[i] = data[i].GroupName;
+                    else{
+                        continue;
                     }
                 }
             },
             error : function() {
-                alert("groupListGet failed to get data!");
+                alert("failed to get number of group!");
             }
         });
         //get user list
@@ -195,24 +169,40 @@ export default React.createClass({
             async: false,
             dataType:'json',
             success: function (data) {
-                userNumber = data.length;
-                if(data.length > 5) {
-                    for (var i = 0; i < 5; i++) {
-                        userAll[i] = data[i];
-                        resultUsername[i] = data[i].username;
+                userNumber = 0;
+                for(var i = 0, j = 0; i < data.length; i++){
+                    if(data[i].isdelete == 'False'){
+                        userNumber++;
+                        if(j < 5){
+                            userAll[i] = data[i];
+                            resultUsername[j] = data[i].username;
+                            j++;
+                        }
+                    }
+                    else{
+                        continue;
                     }
                 }
-                else{
-                    for (var i = 0; i < data.length; i++) {
-                        userAll[i] = data[i];
-                        resultUsername[i] = data[i].username;
-                    }
-                }
-                console.log("userInfo");
-                console.log(data);
             },
             error : function() {
-                alert("userListGet failed to get data!");
+                alert("failed to get number of user!");
+            }
+        });
+    },
+   /* projectMember: function (project) {
+        $.ajax({
+            url:'http://202.196.96.79:1500/api/project/GetProjectMembersName',
+            type:"get",
+            data:{projectname: project},
+            cache:false,
+            async: false,
+            dataType:'json',
+            success: function (data) {
+                console.log(data);
+                projectMember = data;
+            },
+            error : function() {
+                console.log("ProjectMembers failed to get data!");
             }
         });
     },
@@ -225,12 +215,9 @@ export default React.createClass({
             async: false,
             dataType:'json',
             success: function (data) {
-                var projectCommit = data.m_Item1;
+                projectMembersCommit = data;
                 console.log('projectMembersCommit');
                 console.log(data);
-                for (var i in projectCommit) {
-                    projectMembersCommit += i+'  '+projectCommit[i]+'<br />';
-                }
             },
             error : function() {
                 alert("ProjectMembersCommit failed to get data!");
@@ -239,14 +226,14 @@ export default React.createClass({
     },
     groupProject: function (group) {
         $.ajax({
-            url:'http://10.12.51.142:1500/api/Group/GetProjectOfGroup',
+            url:'http://202.196.96.79:1500/api/Project/GetProjectNameGrouply',
             type:"get",
             data:{groupname: group},
             cache:false,
             async: false,
             dataType:'json',
             success: function (data) {
-                groupProject = data;
+                order = data;
                 console.log('groupproject');
                 console.log(data);
             },
@@ -259,37 +246,30 @@ export default React.createClass({
         $.ajax({
             url:'http://202.196.96.79:1500/api/Single/GetMembersProjectsPushNumber',
             type:"get",
-            data:{username: user, queryDays: 30},
+            data:{username: user, queryDays: 7},
             cache:false,
             async: false,
             dataType:'json',
             success: function (data) {
-             //   userCommit = data;
+                userCommit = data;
                 console.log('userCommit');
                 console.log(data);
-                for (var i in data) {
-                    userCommit += i + " " + data[i] + "<br/>";
-                }
-                console.log(userCommit);
             },
             error : function() {
                 alert("userCommit failed to get data!");
             }
         });
-    },
-    alert: function (i) {
-        setInterval(this.userMouseOver(i),5000);
-    },
+    },*/
     render(){
         var self = this;
         var projectList = React.Children.map(this.state.project, function (child,i) {
-            return <li id={'project_'+i} onMouseOver={()=>{self.projectMouseOver(i)}} onMouseLeave={()=>{self.mouseLeave(i)}}>{child}</li>;
+            return <li id={'project_'+i}>{child}</li>;
         });
         var groupList = React.Children.map(this.state.group, function (child,i) {
-            return <li id={'group_'+i} onMouseOver={()=>{self.groupMouseOver(i)}} onMouseLeave={()=>{self.mouseLeave(i)}}>{child}</li>;
+            return <li id={'group_'+i}>{child}</li>;
         });
         var userList = React.Children.map(this.state.user, function (child,i) {
-            return <li id={'user_'+i} onMouseOver={()=>{self.userMouseOver(i)}} onMouseLeave={()=>{self.mouseLeave(i)}}>{child}</li>;
+            return <li id={'user_'+i}>{child}</li>;
         });
         return(
             <div>
@@ -298,16 +278,8 @@ export default React.createClass({
                 </div>
                 <div id="mainPage_main">
                     <div className="mainPage_paper">
-                    
-                        <div className="mainPage_number">{projectNumber}</div>
-                        <div className="mainPage_paperInfo">
-                            commit:+3<br/>
-                            buildTotal:+12<br/>
-                            buildSuccess:-3<br/>
-                            issueStart:+3<br/>
-                            issueEnd:+2<br/>
-                        </div>
-                        <NavLink to="/projectlist" className="mainPage_nav" ><div className="mainPage_new">Project List</div></NavLink>
+                        <div className="mainPage_type">Projects</div>
+                        <div className="mainPage_number"><NavLink to="/projectlist" className="MainPage_navLink">{proNumber}</NavLink></div>
                         <div className="mainPage_ul">
                             <ul id="ul">
                                 {projectList}
@@ -315,16 +287,8 @@ export default React.createClass({
                         </div>
                     </div>
                     <div className="mainPage_paper">
-                  
-                        <div className="mainPage_number">{groupNumber}</div>
-                        <div className="mainPage_paperInfo">
-                            commit:+6<br/>
-                            buildTotal:+7<br/>
-                            buildSuccess:-5<br/>
-                            issueStart:+2<br/>
-                            issueEnd:+1<br/>
-                        </div>
-                        <NavLink to="/grouplist" className="mainPage_nav" ><div className="mainPage_new">Group List</div></NavLink>
+                        <div className="mainPage_type">Groups</div>
+                        <div className="mainPage_number"><NavLink to="/grouplist" className="MainPage_navLink">{groNumber}</NavLink></div>
                         <div className="mainPage_ul">
                             <ul id="ul1">
                                 {groupList}
@@ -332,16 +296,8 @@ export default React.createClass({
                         </div>
                     </div>
                     <div className="mainPage_paper">
-                    
-                        <div className="mainPage_number">{userNumber}</div>
-                        <div className="mainPage_paperInfo">
-                            commit:+3<br/>
-                            buildTotal:-2<br/>
-                            buildSuccess:+6<br/>
-                            issueStart:-4<br/>
-                            issueEnd:-1<br/>
-                        </div>
-                        <NavLink to="/userlist" className="mainPage_nav" ><div className="mainPage_new">User List</div></NavLink>
+                        <div className="mainPage_type">Users</div>
+                        <div className="mainPage_number"><NavLink to="/userlist" className="MainPage_navLink">{userNumber}</NavLink></div>
                         <div className="mainPage_ul">
                             <ul>
                                 {userList}

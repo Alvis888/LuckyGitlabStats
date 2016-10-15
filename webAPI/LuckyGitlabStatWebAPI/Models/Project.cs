@@ -7,6 +7,15 @@ namespace LuckyGitlabStatWebAPI.Models
 {
     public class Project
     {
+        public Project()
+        {
+            projectName = "";
+            projectMonitor = "";
+            projectMembers = "";
+            groupName = "";
+            isDelete = false;
+        }
+        public bool isDelete { set; get; }
         /// <summary>
         /// 项目名
         /// </summary>
@@ -14,10 +23,14 @@ namespace LuckyGitlabStatWebAPI.Models
         /// <summary>
         /// 项目组长
         /// </summary>
-        public string monitor { set; get; }
+        public string projectMonitor { set; get; }
         /// <summary>
         /// 项目成员
         /// </summary>
-        public string[] projectMembers { set; get; }
+        public string projectMembers { set; get; }
+        /// <summary>
+        /// 小组名
+        /// </summary>
+        public string groupName { set; get; }
     }
 }

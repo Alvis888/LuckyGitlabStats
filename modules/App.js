@@ -4,6 +4,7 @@ import AllMembers from './App/AllMembers'
 import DataTable from './App/DataTable'
 import IssueTable from './App/IssueTable'
 import PieChart from "./App/Charts/PieChart"
+import NavLink from './NavLink'
 
 export default React.createClass({
     getInitialState: function() {
@@ -13,13 +14,14 @@ export default React.createClass({
     },
     componentDidMount: function () {
         var table=document.getElementById("table");
-        table.style.display='';
-        app_barchart.style.display='';
-        app_areachart.style.display='none';
-        app_pie.style.display='none';
+         table.style.display='none';
+        app_barchart.style.display='none';
+        app_barchart.style.display='none';
+        app_areachart.style.display='';
+        app_pie.style.display='';
 
     },
-    
+
 
     render() {
         var chart=this.state.charts;

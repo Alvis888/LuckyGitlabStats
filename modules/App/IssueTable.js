@@ -44,8 +44,7 @@ export default React.createClass({
             success: function (data) {
                 products.length = 0;
                 issueData = data;
-                //console.log('issueData');
-                //console.log(issueData);
+                console.log(issueData);
                 //将后台获取的数据填入表格对应位置
                 for (var i = 0; i < issueData.length; i++) {
                     products.push({

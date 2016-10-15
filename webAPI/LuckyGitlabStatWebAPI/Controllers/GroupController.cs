@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 
 namespace LuckyGitlabStatWebAPI.Controllers
@@ -18,13 +19,10 @@ namespace LuckyGitlabStatWebAPI.Controllers
         //姓名去重
         IList<string> distinctNameList;
         ConnectLocalSQL connectdb = new ConnectLocalSQL();
-        SingleController single = new SingleController();
         //成员信息列表
         List<string> memberGroup = new List<string>();
         //编译信息列表
         List<MemberCommit> membercommitList = new List<MemberCommit>();
-        //实例化成员对象
-        Member member = new Member();
         //实例化编译对象
         MemberCommit membercommit = new MemberCommit();
         //组内提交总次数
@@ -35,6 +33,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         int buildSuccesstotal;
         //组内成员提交次数
         List<Dictionary<string, int>> membersPushNumber = new List<Dictionary<string, int>>();
+        #region MyRegion
         /// <summary>
         /// 无参构造函数
         /// </summary>
@@ -58,15 +57,16 @@ namespace LuckyGitlabStatWebAPI.Controllers
             conn.Open();
             //创建查询语句
             SqlCommand querySingleInfo = conn.CreateCommand();
-            querySingleInfo.CommandText = "select GroupName,GroupMonitor,GroupMembers from memberGroup where isdelete=0";
+            querySingleInfo.CommandText = "select GroupName,GroupMonitor,GroupMembers,isDelete from memberGroup ";
             SqlDataReader singleInfoReader = querySingleInfo.ExecuteReader();
             //有多行数据，用while循环
             while (singleInfoReader.Read())
             {
                 Group group = new Group();
-                group.GroupName= singleInfoReader["GroupName"].ToString().Trim();
+                group.GroupName = singleInfoReader["GroupName"].ToString().Trim();
                 group.GroupMonitor = singleInfoReader["GroupMonitor"].ToString().Trim();
                 group.GroupMembers = singleInfoReader["GroupMembers"].ToString().Trim();
+                group.isDelete =bool.Parse( singleInfoReader["isDelete"].ToString().Trim());
                 //memberGroup.Add(group.GroupName);
                 groupList.Add(group);
             }
@@ -97,12 +97,43 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 conn.Close();
                 returnInfo = "删除成功";
             }
-            catch(SqlException e)
+            catch (SqlException e)
             {
                 returnInfo = "删除失败";
             }
             return returnInfo;
         }
+        /// <summary>
+        /// 获取小组所有项目信息
+        /// </summary>
+        /// <param name="groupname"></param>
+        /// <returns></returns>
+        public IList<Project> GetProjectInfoGrouply(string groupname)
+        {
+            IList<Project> projectList = new List<Project>();
+            List<Project> projectInfo = new List<Project>();
+            SqlConnection conn = connectdb.ConnectDataBase();
+            conn.Open();
+            //创建查询语句
+            SqlCommand querySingleInfo = conn.CreateCommand();
+            querySingleInfo.CommandText = "select * from MemberProject where groupname like '%" + groupname + "%'";
+            SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+            //有多行数据，用while循环
+            while (getTotalCommitTimesReader.Read())
+            {
+                Project project = new Project();
+                project.projectName = getTotalCommitTimesReader["projectname"].ToString().Trim();
+                project.projectMonitor = getTotalCommitTimesReader["projectMonitor"].ToString().Trim();
+                project.projectMembers = getTotalCommitTimesReader["projectMembers"].ToString().Trim();
+                projectInfo.Add(project);
+            }
+            projectList = projectInfo.Distinct().ToList();
+            //关闭查询
+            getTotalCommitTimesReader.Close();
+            //关闭数据库连接
+            conn.Close();
+            return projectList;
+        } 
         /// <summary>
         /// 获取小组成员名单
         /// </summary>
@@ -121,7 +152,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 conn.Open();
                 //创建查询语句
                 SqlCommand querySingleInfo = conn.CreateCommand();
-                querySingleInfo.CommandText = "SELECT  GroupMonitor,GroupMembers FROM MemberGroup where groupName=" + "'" + groupname + "' and isdelete=0";
+                querySingleInfo.CommandText = "SELECT  GroupMonitor,GroupMembers FROM MemberGroup where groupName=" + "'" + groupname + "' ";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -143,7 +174,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 //关闭数据库连接
                 conn.Close();
             }
-            catch(SqlException e)
+            catch (SqlException e)
             {
                 sw.WriteLine(e.ToString());
             }
@@ -158,6 +189,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <returns>返回字典树类型(用户名，次数)的列表</returns>
         public Dictionary<string, int> GetMembersBuildNumberByLongtime(string groupname, int queryday)
         {
+            SingleController single = new SingleController();
             //成员姓名，次数
             Dictionary<string, int> membersNumber = new Dictionary<string, int>();
             //成员姓名列表
@@ -180,6 +212,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <returns>返回字典树类型(用户名，次数)的列表</returns>
         public Dictionary<string, int> GetMembersBuildSuccessNumberByDays(string groupname, int queryday)
         {
+            SingleController single = new SingleController();
             //成员姓名，次数
             Dictionary<string, int> membersNumber = new Dictionary<string, int>();
             //成员姓名列表
@@ -193,7 +226,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 membersNumber.Add(name, num);
             }
             return membersNumber;
-        }    
+        }
         /// <summary>
         /// 查找编译总次数
         /// </summary>
@@ -270,28 +303,71 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <param name="groupname">小组名</param>
         /// <param name="queryday">查询日期</param>
         /// <returns></returns>
-        public List<int> GetMembersBuild_ByDays(string groupname, int queryday)
+        public Dictionary<long,int> GetMembersBuildByDays(string groupname, int queryDays)
         {
-            //小组成员名单
-            IList<string> nameList = GetGroupMembersName(groupname);
-            //每人、每天编译量
-            List<int> buildEveryone = new List<int>();
-            //小组每天编译量
-            List<int> buildEveryDay = new List<int>();
-            for (int i = 0; i < queryday; i++)
+            //以当前日作第一天，0代表今天
+            queryDays--;
+            Dictionary<long, int> buildNumber = new Dictionary<long, int>();
+            //连接本地数据库
+            SqlConnection conn = connectdb.ConnectDataBase();
+            //打开数据库
+            conn.Open();
+            //创建查询语句
+            SqlCommand querySingleInfo = conn.CreateCommand();
+            querySingleInfo.CommandText = "SELECT CONVERT(varchar(12), CommitTime, 111) as querydate, COUNT(CONVERT(varchar(12), CommitTime, 111)) as queryTimes FROM MemberCommit,member  where Member.UserName=MemberCommit.username and Member.groupname like '%" + groupname + "%' and  DATEADD(d,-150, CONVERT(varchar(12), getdate(), 111)) <= CONVERT(varchar(12), CommitTime, 111)   group by CONVERT(varchar(12), CommitTime, 111) order by CONVERT(varchar(12), CommitTime, 111)desc";
+            SqlDataReader singleInfoReader = querySingleInfo.ExecuteReader();
+            //有多行数据，用while循环
+            while (singleInfoReader.Read())
             {
-                buildEveryDay.Add(0);
+                DateTime querydate = DateTime.Parse(singleInfoReader["querydate"].ToString().Trim());
+                int queryTimes = int.Parse(singleInfoReader["queryTimes"].ToString().Trim());
+
+                long intResult = 0;
+                System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+                intResult = long.Parse((querydate.Date - startTime).TotalSeconds.ToString());
+                buildNumber.Add(intResult * 1000, queryTimes);
             }
-            int[] buidNumber = new int[nameList.Count()];
-            for (int i = 0; i < nameList.Count(); i++)//人数次
+            //关闭查询
+            singleInfoReader.Close();
+            //关闭数据库连接
+            conn.Close();
+            return buildNumber;
+        }
+        /// <summary>
+        /// 获取小组每天的编译成功量
+        /// </summary>
+        /// <param name="groupname">小组名</param>
+        /// <param name="queryday">查询日期</param>
+        /// <returns></returns>
+        public Dictionary<long, int> GetMembersBuildSuccessByDays(string groupname, int queryDays)
+        {
+            //以当前日作第一天，0代表今天
+            queryDays--;
+            Dictionary<long, int> buildNumber = new Dictionary<long, int>();
+            //连接本地数据库
+            SqlConnection conn = connectdb.ConnectDataBase();
+            //打开数据库
+            conn.Open();
+            //创建查询语句
+            SqlCommand querySingleInfo = conn.CreateCommand();
+            querySingleInfo.CommandText = "SELECT CONVERT(varchar(12), CommitTime, 111) as querydate, COUNT(CONVERT(varchar(12), CommitTime, 111)) as queryTimes FROM MemberCommit,member  where Member.UserName=MemberCommit.username and Member.groupname like '%"+groupname+"%' and result=1 and  DATEADD(d,-150, CONVERT(varchar(12), getdate(), 111)) <= CONVERT(varchar(12), CommitTime, 111)   group by CONVERT(varchar(12), CommitTime, 111) order by CONVERT(varchar(12), CommitTime, 111)desc";
+            SqlDataReader singleInfoReader = querySingleInfo.ExecuteReader();
+            //有多行数据，用while循环
+            while (singleInfoReader.Read())
             {
-                buildEveryone = single.GetBuildTotal_Personally_ByDay(nameList[i], queryday);
-                for (int j = 0; j < queryday; j++)
-                {
-                    buildEveryDay[j] += buildEveryone[j];
-                }
+                DateTime querydate = DateTime.Parse(singleInfoReader["querydate"].ToString().Trim());
+                int queryTimes = int.Parse(singleInfoReader["queryTimes"].ToString().Trim());
+
+                long intResult = 0;
+                System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+                intResult = long.Parse((querydate.Date - startTime).TotalSeconds.ToString());
+                buildNumber.Add(intResult * 1000, queryTimes);
             }
-            return buildEveryDay;
+            //关闭查询
+            singleInfoReader.Close();
+            //关闭数据库连接
+            conn.Close();
+            return buildNumber;
         }
         /// <summary>
         /// 获取小组成员每人提交量
@@ -301,6 +377,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <returns>返回字典树类型(用户名，次数)的列表</returns>
         public Dictionary<string, int> GetMembersPushNumberByDays(string groupname, int queryday)
         {
+            SingleController single = new SingleController();
             //成员姓名，次数
             Dictionary<string, int> membersNumber = new Dictionary<string, int>();
             //成员姓名列表
@@ -321,28 +398,35 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <param name="groupname">小组名</param>
         /// <param name="queryday">查询日期</param>
         /// <returns></returns>
-        public List<int> GetMembersPush_ByDays(string groupname, int queryday)
+        public Dictionary<long,int> GetMembersPushByDays(string groupname, int queryDays)
         {
-            //小组成员名单
-            IList<string> nameList = GetGroupMembersName(groupname);
-            //每人、每天提交量
-            List<int> pushEveryone = new List<int>();
-            //小组每天提交量
-            List<int> pushEveryDay = new List<int>();
-            for (int i = 0; i < queryday; i++)
+            //以当前日作第一天，0代表今天
+            queryDays--;
+            Dictionary<long, int> commitNumber = new Dictionary<long, int>();
+            //连接本地数据库
+            SqlConnection conn = connectdb.ConnectDataBase();
+            //打开数据库
+            conn.Open();
+            //创建查询语句
+            SqlCommand querySingleInfo = conn.CreateCommand();
+            querySingleInfo.CommandText = "SELECT CONVERT(varchar(12), CommitTime, 111) as querydate, COUNT(CONVERT(varchar(12), CommitTime, 111)) as queryTimes FROM MemberCommit,member  where Member.UserName=MemberCommit.username and Member.groupname like '%" + groupname + "%' and  DATEADD(d,-150, CONVERT(varchar(12), getdate(), 111)) <= CONVERT(varchar(12), CommitTime, 111)   group by CONVERT(varchar(12), CommitTime, 111) order by CONVERT(varchar(12), CommitTime, 111)desc";
+            SqlDataReader singleInfoReader = querySingleInfo.ExecuteReader();
+            //有多行数据，用while循环
+            while (singleInfoReader.Read())
             {
-                pushEveryDay.Add(0);
+                DateTime querydate = DateTime.Parse(singleInfoReader["querydate"].ToString().Trim());
+                int queryTimes = int.Parse(singleInfoReader["queryTimes"].ToString().Trim());
+
+                long intResult = 0;
+                System.DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+                intResult = long.Parse((querydate.Date - startTime).TotalSeconds.ToString());
+                commitNumber.Add(intResult * 1000, queryTimes);
             }
-            int[] buidNumber = new int[nameList.Count()];
-            for (int i = 0; i < nameList.Count(); i++)//人数次
-            {
-                pushEveryone = single.GetCommitTotal_Personally_ByDay(nameList[i], queryday);
-                for (int j = 0; j < queryday; j++)
-                {
-                    pushEveryDay[j] += pushEveryone[j];
-                }
-            }
-            return pushEveryDay;
+            //关闭查询
+            singleInfoReader.Close();
+            //关闭数据库连接
+            conn.Close();
+            return commitNumber;
         }
         /// <summary>
         /// 查找提交总次数
@@ -379,6 +463,34 @@ namespace LuckyGitlabStatWebAPI.Controllers
             }
             return buildtotal;
         }
+        /// <summary>
+        /// 获取小组做的所有项目
+        /// </summary>
+        /// <param name="grouname"></param>
+        /// <returns></returns>
+        public List<string> GetProjectOfGroup(string groupname)
+        {
+            List<string> projectList = new List<string>();
+            SqlConnection conn = connectdb.ConnectDataBase();
+            //打开数据库
+            conn.Open();
+            //创建查询语句
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "select projectName from memberProject where groupname='"+groupname+"'";
+            SqlDataReader singleInfoReader = cmd.ExecuteReader();
+            //有多行数据，用while循环
+            while (singleInfoReader.Read())
+            {
+                string  projectName = singleInfoReader["projectName"].ToString().Trim();
+                projectList.Add(projectName);
+            }
+            //关闭查询
+            singleInfoReader.Close();
+            //关闭数据库连接
+            conn.Close();
+            return projectList;
+        }
+        #endregion
     }
 }
 

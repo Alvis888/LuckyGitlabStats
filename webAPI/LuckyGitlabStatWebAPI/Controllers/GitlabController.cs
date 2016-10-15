@@ -14,9 +14,12 @@ namespace LuckyGitlabStatWebAPI.Controllers
     {
         //小组名
         string groupname;
-        ProjectController project = new ProjectController();
+        string username;
         ConnectLocalSQL connectLocaldb = new ConnectLocalSQL();
-        CommonController common = new CommonController();
+        public GitlabController()
+        {
+            /*Empty*/
+        }
         /// <summary>
         /// 将push events的数据插入数据库
         /// </summary>
@@ -24,31 +27,45 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <returns>是否插入成功</returns>
         public int PushEventInfo([FromBody]PushEvent push)
         {
-            //打开数据库
+            ProjectController project = new ProjectController();
+            List<string> projectName = new List<string>();
             try
             {
                 SqlConnection conn = connectLocaldb.ConnectDataBase();
                 conn.Open();
-
-                //SqlCommand querySingleInfo = conn.CreateCommand();
-                //querySingleInfo.CommandText = "SELECT  groupname as result FROM Member where UserName=" + "'" + push.user_name + "  ";
-                //SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
-                ////有多行数据，用while循环
-                //while (getTotalCommitTimesReader.Read())
-                //{
-                //    groupname = getTotalCommitTimesReader["result"].ToString().Trim();
-                //}
-
                 string sql = "INSERT INTO MemberCommitBeforeCompiling(Username,ProjectName,Version,GroupName,CommitTime,Branch) VALUES ('" + push.user_name + "','" + push.project.name + "','" + push.after + "','" + groupname + "',getdate(),'" + push.@ref + "') ";
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 int result = cmd.ExecuteNonQuery();
                 //判断项目是否已存在
-                IList<string> namelist = project.GetAllProjectName();
-                if(!namelist.Contains(push.project.name))
+                IList<Project> namelist = project.GetAllProjectInfo();
+                foreach(var i in namelist)
                 {
-                    sql = "INSERT INTO Project(ProjectName,CommitTime,Branch) VALUES ('" + push.project.name + "',getdate(),'" + push.@ref + "') ";
+                    projectName.Add(i.projectName);
+                }
+                if (!projectName.Contains(push.project.name))
+                {
+                    sql = "INSERT INTO MemberProject(ProjectName,CommitTime，isdelete) VALUES ('" + push.project.name + "',getdate(),'0') ";
                     cmd = new SqlCommand(sql, conn);
                     result = cmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    SqlCommand querySingleInfo = conn.CreateCommand();
+                    querySingleInfo.CommandText = "SELECT projectMembers FROM MemberProject where projectName=" + "'" + push.project.name + "'";
+                    SqlDataReader singleInfoReader = querySingleInfo.ExecuteReader();
+                    //有多行数据，用while循环
+                    while (singleInfoReader.Read())
+                    {
+                       username = singleInfoReader["projectMembers"].ToString().Trim();
+                    }
+                    if(!username.Contains(push.user_name))
+                    {
+                        sql = "update MemberProject set ProjectMembers=" + "ProjectMembers+'," + push.user_name + "'";
+                        cmd = new SqlCommand(sql, conn);
+                        result = cmd.ExecuteNonQuery();
+                    }
+                    //关闭查询
+                    singleInfoReader.Close();
                 }
                 conn.Close();
                 return result;
@@ -84,6 +101,8 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //}
 
         }
+        #region MyRegion
+
         /// <summary>
         /// 将Build events 的数据插入数据库
         /// </summary>
@@ -99,7 +118,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
                     //打开数据库
                     conn.Open();
                     bool buildResult = (build.build_status == "success" ? true : false);
-                    string sql = "insert into MemberCommit(UserName,ProjectName,SpendTime,BeginTime,EndTime,Version,Result,CommitTime,Branch) Values('" + build.user.name + "','" + build.project_name + "','" + build.build_duration + "','" + (build.build_started_at).Substring(0, build.build_started_at.Length - 3) + "','" + (build.build_finished_at).Substring(0, build.build_finished_at.Length - 3) + "8:00:00" + "','" + build.before_sha + "','" + buildResult + "',getdate(),'" + build.@ref + "')";
+                    string sql = "insert into MemberCommit(UserName,ProjectName,SpendTime,BeginTime,EndTime,Version,Result,CommitTime,Branch) Values('" + build.user.name + "','" + build.project_name + "','" + build.build_duration + "',DATEADD(hh,8,'" + (build.build_started_at).Substring(0, build.build_started_at.Length - 3) + "'),DATEADD(hh,8,'" + (build.build_finished_at).Substring(0, build.build_finished_at.Length - 3) + "'),'" + build.before_sha + "','" + buildResult + "',getdate(),'" + build.@ref + "')";
                     SqlCommand cmd = new SqlCommand(sql, conn);
                     int result = cmd.ExecuteNonQuery();
                     conn.Close();
@@ -128,7 +147,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             {
                 SqlConnection conn = connectLocaldb.ConnectDataBase();
                 conn.Open();
-                sql = "insert into MemberIssue(assignee,projectname,starttime,updatetime,initiator,state,issue) Values('" + issue.assignee.name + "','" + issue.project.name + "','" + (issue.object_attributes.created_at).Substring(0, (issue.object_attributes.created_at).Length - 3) + "','" + (issue.object_attributes.updated_at).Substring(0, (issue.object_attributes.updated_at).Length - 3)  + "','" + issue.user.name+"','"+issue.object_attributes.state+"',"+issue.object_attributes.iid+")"; 
+                sql = "insert into MemberIssue(assignee,projectname,starttime,updatetime,initiator,state,issue) Values('" + issue.assignee.name + "','" + issue.project.name + "',DATEADD(hh,8,'" + (issue.object_attributes.created_at).Substring(0, (issue.object_attributes.created_at).Length - 3) + "'),DATEADD(hh,8,'" + (issue.object_attributes.updated_at).Substring(0, (issue.object_attributes.updated_at).Length - 3) + "'),'" + issue.user.name + "','" + issue.object_attributes.state + "'," + issue.object_attributes.iid + ")";
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 int result = cmd.ExecuteNonQuery();
                 conn.Close();
@@ -145,22 +164,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 result = 0;
             }
             return result;
-        }
+        } 
+        #endregion
     }
 }
-
-
-                //if (issue.object_attributes.action.ToLower().Equals("open"))
-                //{
-                //    sql = "insert into MemberIssue(assignee,projectname,starttime,updatetime,initiator,state,issue) Values('" + issue.assignee.name + "','" + issue.project.name + "',getdate(),getdate(),'"+issue.user.name+"','opened',"+issue.object_attributes.iid+")"; 
-                //}
-                //else
-                //if (issue.object_attributes.action.Equals("close"))
-                //{
-                //    sql = "update MemberIssue set state=" + "'closed' ,updatetime=" + "getdate() where issue = " + "" + issue.object_attributes.iid + " and projectname=" + "'" + issue.project.name + "'";
-                //}
-                //else
-                //if (issue.object_attributes.action.Equals("reopen"))
-                //{
-                //    sql = "update MemberIssue set state=" + "'opened' ,updatetime=" + "getdate() where issue = " + "" + issue.object_attributes.iid + " and projectname=" + "'" + issue.project.name + "'";
-                //}

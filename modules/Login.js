@@ -49,7 +49,6 @@ export default React.createClass({
             else if(result == 1){
                 this.setState({html: ""});
                 sessionStorage.setItem('identity', result);
-                sessionStorage.setItem('projectName', 'none');
                 sessionStorage.setItem('username', this.state.name);
                 sessionStorage.setItem('days', "7");
                 return true;
@@ -95,12 +94,10 @@ export default React.createClass({
                     <div id="login_textField">
                         <TextField id="login_textFieldOne"
                                    hintText="Username"
-                                   floatingLabelText="Username"
                                    onChange={this.userName}
                         /><br/><br/>
                         <TextField id="login_textFieldTwo"
                                    hintText="Password"
-                                   floatingLabelText="Password"
                                    type="password" 
                                    onChange={this.password}
                         /><br/><br/>
