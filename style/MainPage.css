@@ -1,18 +1,11 @@
-
 #mainPage_image{
-   /* background-image:url("../Photo/main.jpg") ;*/
+    /* background-image:url("../Photo/main.jpg") ;*/
     background-size:cover;
     height:100%;
     z-index: -1;
 }
-#mainPage_main{
-    position: absolute;
-    top: 80px;
-    left: 170px;
-    width: 1000px;
-}
 #mainPage_left{
-    height: 52px;
+    height: 62px;
     background-color: #4285F4;
     width: 100%;
     display: block;
@@ -20,8 +13,8 @@
     box-shadow: 0 3px 3px rgba(0,0,0,0.06);
 }
 .mainPage_title{
-    margin-bottom: 10px;
-    margin-top: 0px;
+    margin-top: -10px;
+    margin-bottom: 20px;
     color: #FFFFFF;
     margin-left: 40px;
     font-style: normal;
@@ -34,12 +27,24 @@
     white-space: nowrap;
     width: 100px;
     height: 40px;
-    line-height: 56px;
     align-items: center;
 }
-
-.mainPage_admin{
-    height: 30px;
+#mainPage_time{
+    margin-top: -5px;
+}
+.mainPage_divide1{
+    width: 1080px;
+    height: 0px;
+    margin-top: -30px;
+    margin-left: 140px;
+    border:0.5px solid rgba(0,0,0,0.2);
+}
+.mainPage_divide{
+    width: 1080px;
+    height: 0px;
+    margin-top: 20px;
+    margin-left: 140px;
+    border:0.5px solid rgba(0,0,0,0.2);
 }
 .mainPage_text{
     margin: auto 500px;
@@ -53,48 +58,113 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     white-space:nowrap;
 }
-.mainPage_paper{
+.mainPage_part{
+    padding-left: 90px;
+    width: 1200px;
+    height: 340px;
+}
+.mainPage_partOnePaper{
     height: 250px;
-    width: 200px;
+    width: 300px;
     background-color: #FFFFFF;
-    margin-left: 100px;
-    margin-top: 20px;
+    margin-left: 68px;
+    margin-top: 15px;
     box-shadow:  0 0 7px rgba(0,0,0,.14),0 7px 15px rgba(0,0,0,.23);
     float: left;
     white-space:nowrap;
 }
+.mainPage_partTwoPaper{
+    height: 280px;
+    width: 250px;
+    background-color: #FFFFFF;
+    margin-left: 90px;
+    margin-top: 40px;
+    box-shadow:  0 0 7px rgba(0,0,0,.14),0 7px 15px rgba(0,0,0,.23);
+    float: left;
+    white-space:nowrap;
+}
+.mainPage_barChart{
+    background: #ffffff;
+    padding: 0;
+    width: 710px;
+    height: 280px;
+    margin-top: 40px;
+    margin-left: 75px;
+    float: left;
+    box-shadow: 0px 0px 1px rgba(0,0,0,0.1), 0px 2px 1px rgba(0,0,0,0.1);
+}
+.mainPage_horizontalBarChart{
+    background: #ffffff;
+    width: 800px;
+    height: 400px;
+    margin-top: 40px;
+    margin-left: 270px;
+    margin-bottom: 40px;
+    box-shadow: 0px 0px 1px rgba(0,0,0,0.1), 0px 2px 1px rgba(0,0,0,0.1);
+}
 .mainPage_type{
-    margin-top: 10px;
+    margin-top: 15px;
     margin-left: 15px;
+    float: left;
     font-family: "微软雅黑", Helvetica, Arial, sans-serif;
     font-size: 20px;
+    color: #0A3A72;
+}
+.mainPage_change{
+    margin-top: 15px;
+    margin-right: 15px;
+    float: right;
+    font-family: "微软雅黑", Helvetica, Arial, sans-serif;
+    font-size: 25px;
+    color: black;
+}
+.mainPage_issueOpenedChange{
+    margin-top: 15px;
+    margin-right: 15px;
+    float: right;
+    font-family: "微软雅黑", Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    color: black;
+}
+.mainPage_issueClosedChange{
+    margin-top: 18px;
+    margin-right: -81px;
+    float: right;
+    font-family: "微软雅黑", Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    color: black;
 }
 .mainPage_number{
+    margin-top: 100px;
+    text-align: center;
+    font-size: 70px;
+}
+.mainPage_partTwoNumber{
+    margin-top: 120px;
+    text-align: center;
+    font-size: 70px;
+}
+.mainPage_button{
+    height: 30px;
+    width: 270px;
+    text-align: center;
     margin-top: 80px;
-    text-align: center;
-    font-size: 60px;
-}
-.mainPage_navLink:hover{
-    text-decoration:none;
-}
-.mainPage_new{
-    height: 27px;
-    width: 85px;
-    text-align: center;
-    margin-top: 75px;
     margin-left: 15px;
-    padding-top: 5px;
+    padding-top: 8px;
     font-family: "微软雅黑", Helvetica, Arial, sans-serif;
-    font-size: 13px;
+    font-size: 15px;
     color: white;
-    background-color: #008200;
+    background-color: #28A2D6;
     border-radius: 3px;
 }
 .mainPage_nav:link{
     text-decoration:none;
 }
+.mainPage_list{
+    margin-top: 40px;
+}
 .mainPage_ul{
-    margin-top: 150px;
+    margin-top: 40px;
     margin-left: -25px;
 }
 .mainPage_ul li{
@@ -112,7 +182,7 @@
 .mainPage_tips{
     background-color: #9E9E9E;
     color: black;
-    width: 210px;
+    width: 220px;
     font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
     border-radius: 5px;
     padding: 10px;

@@ -46,6 +46,7 @@ export default React.createClass({
 
     render(){
         if(identity == 1){
+            sessionStorage.setItem('timeFrame', 7);
             return(
                 <div id="type">
                     <IconMenu
