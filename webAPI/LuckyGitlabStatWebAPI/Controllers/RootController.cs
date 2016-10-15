@@ -353,7 +353,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然周查询
             if (queryDays == 7)
             {
-                querySingleInfo.CommandText = " SET DATEFIRST 1  select top 2 DATEPART(wk,committime) as month, count(DATEPART(wk, committime)) as times from Memberproject where DATEPART(wk, committime) >= (DATEPART(m, getdate()) - 2) and DATEPART(yy, committime) = (DATEPART(yy, getdate()))  group by DATEPART(wk, committime)   order by DATEPART(wk, committime) desc";
+                querySingleInfo.CommandText = " SET DATEFIRST 1  select top 2 DATEPART(wk,committime) as month, count(DATEPART(wk, committime)) as times from Memberproject where DATEPART(wk, committime) >= (DATEPART(wk, getdate()) - 1) and DATEPART(yy, committime) = (DATEPART(yy, getdate()))  group by DATEPART(wk, committime)   order by DATEPART(wk, committime) desc";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -368,7 +368,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然月查询
             if (queryDays == 30)
             {
-                querySingleInfo.CommandText = "   select top 2 DATEPART(m,committime) as month,count(DATEPART(m, committime)) as times from Memberproject where DATEPART(m, committime) >= (DATEPART(m, getdate()) - 2) and DATEPART(yy, committime) = (DATEPART(yy, getdate()))  group by DATEPART(m, committime)  order by DATEPART(m, committime) desc";
+                querySingleInfo.CommandText = "   select top 2 DATEPART(m,committime) as month,count(DATEPART(m, committime)) as times from Memberproject where DATEPART(m, committime) >= (DATEPART(m, getdate()) - 1) and DATEPART(yy, committime) = (DATEPART(yy, getdate()))  group by DATEPART(m, committime)  order by DATEPART(m, committime) desc";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -383,7 +383,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然年查询
             else
             {
-                querySingleInfo.CommandText = " SET  select top 2 DATEPART(yy,committime) as month, count(DATEPART(yy, committime)) as times from Memberproject where DATEPART(yy, committime) >= (DATEPART(yy, getdate()) - 2) group by DATEPART(yy, committime) order by DATEPART(yy, committime) desc";
+                querySingleInfo.CommandText = " select top 2 DATEPART(yy,committime) as month, count(DATEPART(yy, committime)) as times from Memberproject where DATEPART(yy, committime) >= (DATEPART(yy, getdate()) - 1) group by DATEPART(yy, committime) order by DATEPART(yy, committime) desc";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -414,7 +414,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然周查询
             if (queryDays == 7)
             {
-                querySingleInfo.CommandText = " SET DATEFIRST 1  select top 2 DATEPART(wk, buildtime) as month,	count(DATEPART(wk, buildtime)) as times from Membergroup where DATEPART(wk, buildtime) >= (DATEPART(wk, getdate()) - 2)   and DATEPART(yy, buildtime) = (DATEPART(yy, getdate())) group by DATEPART(wk, buildtime) order by DATEPART(wk, buildtime) desc ";
+                querySingleInfo.CommandText = " SET DATEFIRST 1  select top 2 DATEPART(wk, buildtime) as month,	count(DATEPART(wk, buildtime)) as times from Membergroup where DATEPART(wk, buildtime) >= (DATEPART(wk, getdate()) - 1)   and DATEPART(yy, buildtime) = (DATEPART(yy, getdate())) group by DATEPART(wk, buildtime) order by DATEPART(wk, buildtime) desc ";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -429,7 +429,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然月查询
             if (queryDays == 30)
             {
-                querySingleInfo.CommandText = " SET   select top 2  DATEPART(m, buildtime) as month, 	count(DATEPART(m, buildtime)) as times from Membergroup where DATEPART(m, buildtime) >= (DATEPART(m, getdate()) - 2)    and DATEPART(yy, buildtime) = (DATEPART(yy, getdate())) group by DATEPART(m, buildtime) order by DATEPART(m, buildtime) desc";
+                querySingleInfo.CommandText = "  select top 2  DATEPART(m, buildtime) as month,count(DATEPART(m, buildtime)) as times from Membergroup where DATEPART(m, buildtime) >= (DATEPART(m, getdate()) -1)    and DATEPART(yy, buildtime) = (DATEPART(yy, getdate())) group by DATEPART(m, buildtime) order by DATEPART(m, buildtime) desc";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -444,7 +444,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然年查询
             else
             {
-                querySingleInfo.CommandText = " select top 2 DATEPART(yy, buildtime) as month, 	count(DATEPART(yy, buildtime)) as times from Membergroup where DATEPART(yy, buildtime) >= (DATEPART(yy, getdate()) - 2) group by DATEPART(yy, buildtime) order by DATEPART(yy, buildtime) desc";
+                querySingleInfo.CommandText = " select top 2 DATEPART(yy, buildtime) as month, 	count(DATEPART(yy, buildtime)) as times from Membergroup where DATEPART(yy, buildtime) >= (DATEPART(yy, getdate()) - 1) group by DATEPART(yy, buildtime) order by DATEPART(yy, buildtime) desc";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -490,7 +490,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然月查询
             if (queryDays == 30)
             {
-                querySingleInfo.CommandText = " select top 2  DATEPART(m, buildtime) as month, 	count(DATEPART(m, buildtime)) as times from Member where DATEPART(m, buildtime) >= (DATEPART(m, getdate()) - 2)    and DATEPART(yy, buildtime) = (DATEPART(yy, getdate())) group by DATEPART(m, buildtime) order by DATEPART(m, buildtime) desc";
+                querySingleInfo.CommandText = " select top 2  DATEPART(m, buildtime) as month, 	count(DATEPART(m, buildtime)) as times from Member where DATEPART(m, buildtime) >= (DATEPART(m, getdate()) - 1)    and DATEPART(yy, buildtime) = (DATEPART(yy, getdate())) group by DATEPART(m, buildtime) order by DATEPART(m, buildtime) desc";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())
@@ -505,7 +505,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然年查询
             else
             {
-                querySingleInfo.CommandText = " select top 2 DATEPART(yy, buildtime) as yearly, 	count(DATEPART(yy, buildtime)) as times from Member where DATEPART(yy, buildtime) >= (DATEPART(yy, getdate()) - 2) group by DATEPART(yy, buildtime) order by DATEPART(yy, buildtime) desc";
+                querySingleInfo.CommandText = " select top 2 DATEPART(yy, buildtime) as yearly, 	count(DATEPART(yy, buildtime)) as times from Member where DATEPART(yy, buildtime) >= (DATEPART(yy, getdate()) -1) group by DATEPART(yy, buildtime) order by DATEPART(yy, buildtime) desc";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())

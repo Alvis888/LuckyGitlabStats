@@ -403,6 +403,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
             //自然周查询
             if (queryDays == 7)
             {
+                //本自然周期
                 querySingleInfo.CommandText = " SET DATEFIRST 1  select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommitBeforeCompiling where DATEPART(wk, committime) = DATEPART(wk, getdate()) group by DATEPART(w, committime)";
                 SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
@@ -414,8 +415,8 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 }
                 //关闭查询
                 getTotalCommitTimesReader.Close();
-
-                querySingleInfo.CommandText = " select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommitBeforeCompiling where DATEPART(wk, committime) >= (DATEPART(wk, getdate())-1) group by DATEPART(w, committime)";
+                //2个自然周期内
+                querySingleInfo.CommandText = "SET DATEFIRST 1  select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommitBeforeCompiling where DATEPART(wk, committime) >= (DATEPART(wk, getdate())-1) group by DATEPART(w, committime)";
                 getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
                 //有多行数据，用while循环
                 while (getTotalCommitTimesReader.Read())

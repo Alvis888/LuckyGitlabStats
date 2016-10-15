@@ -491,6 +491,134 @@ namespace LuckyGitlabStatWebAPI.Controllers
             return projectList;
         }
         #endregion
+
+
+    //    /// <summary>
+    //    /// 指定项目自然时间总提交数量
+    //    /// </summary>
+    //    /// <param name="projectName"></param>
+    //    /// <param name="queryDays"></param>
+    //    /// <returns></returns>
+    //    public int GetCommitToalOfProject_Weekly_Monthly_Yearly(string projectName, int queryDays)
+    //    {
+
+    //        {
+    //            Dictionary<int, int> memberCommitOnce = new Dictionary<int, int>();
+    //            Dictionary<int, int> memberCommitTwice = new Dictionary<int, int>();
+    //            int addNumber = 0;
+    //            SqlConnection conn = connectdb.ConnectDataBase();
+    //            //打开数据库
+    //            conn.Open();
+    //            //创建查询语句
+    //            SqlCommand querySingleInfo = conn.CreateCommand();
+    //            //自然周查询
+    //            if (queryDays == 7)
+    //            {
+    //                querySingleInfo.CommandText = " SET DATEFIRST 1  select  DATEPART(wk,committime) as week, count(DATEPART(wk, committime)) as times from MemberCommitBeforeCompiling where DATEPART(wk, committime) = (DATEPART(wk, getdate())) and DATEPART(yy, committime) = (DATEPART(yy, getdate()))  group by  DATEPART(wk, committime)   order by  DATEPART(wk, committime) desc";
+    //                SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+    //                //有多行数据，用while循环
+    //                while (getTotalCommitTimesReader.Read())
+    //                {
+    //                    addNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+    //                }
+    //                //关闭查询
+    //                getTotalCommitTimesReader.Close();
+    //                conn.Close();
+    //                return addNumber;
+    //            }
+    //            //自然月查询
+    //            if (queryDays == 30)
+    //            {
+    //                querySingleInfo.CommandText = "   select top 2 DATEPART(m,committime) as month,count(DATEPART(m, committime)) as times from MemberCommitBeforeCompiling where DATEPART(m, committime) = (DATEPART(m, getdate())) and DATEPART(yy, committime) = (DATEPART(yy, getdate()))  group by DATEPART(m, committime)  order by DATEPART(m, committime) desc";
+    //                SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+    //                //有多行数据，用while循环
+    //                while (getTotalCommitTimesReader.Read())
+    //                {
+    //                    addNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+    //                }
+    //                //关闭查询
+    //                getTotalCommitTimesReader.Close();
+    //                conn.Close();
+    //                return addNumber;
+    //            }
+    //            //自然年查询
+    //            else
+    //            {
+    //                querySingleInfo.CommandText = " select top 2 DATEPART(yy,committime) as month, count(DATEPART(yy, committime)) as times from MemberCommitBeforeCompiling where DATEPART(yy, committime) >= (DATEPART(yy, getdate()) - 2) group by DATEPART(yy, committime) order by DATEPART(yy, committime) desc";
+    //                SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+    //                //有多行数据，用while循环
+    //                while (getTotalCommitTimesReader.Read())
+    //                {
+    //                    addNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+    //                }
+    //                //关闭查询
+    //                getTotalCommitTimesReader.Close();
+    //                conn.Close();
+    //                return addNumber;
+    //            }
+    //        }
+    //    }
+    //    /// <summary>
+    //    /// 指定项目自然时间总编译数量
+    //    /// </summary>
+    //    /// <param name="projectName"></param>
+    //    /// <param name="queryDays"></param>
+    //    /// <returns></returns>
+    //    public int GetBuildToalOfProject_Weekly_Monthly_Yearly(string projectName, int queryDays)
+    //    {
+
+    //        int addNumber = 0;
+    //        SqlConnection conn = connectdb.ConnectDataBase();
+    //        //打开数据库
+    //        conn.Open();
+    //        //创建查询语句
+    //        SqlCommand querySingleInfo = conn.CreateCommand();
+    //        //自然周查询
+    //        if (queryDays == 7)
+    //        {
+    //            querySingleInfo.CommandText = "select  DATEPART(wk,committime) as week, count(DATEPART(wk, committime)) as times from MemberCommit where DATEPART(wk, committime) = (DATEPART(wk, getdate())) and DATEPART(yy, committime) = (DATEPART(yy, getdate()))  group by  DATEPART(wk, committime)   order by  DATEPART(wk, committime) desc";
+    //            SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+    //            //有多行数据，用while循环
+    //            while (getTotalCommitTimesReader.Read())
+    //            {
+    //                addNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+    //            }
+    //            //关闭查询
+    //            getTotalCommitTimesReader.Close();
+    //            conn.Close();
+    //            return addNumber;
+    //        }
+    //        //自然月查询
+    //        if (queryDays == 30)
+    //        {
+    //            querySingleInfo.CommandText = "   select top 2 DATEPART(m,committime) as month,count(DATEPART(m, committime)) as times from MemberCommit where DATEPART(m, committime) = (DATEPART(m, getdate())) and DATEPART(yy, committime) = (DATEPART(yy, getdate()))  group by DATEPART(m, committime)  order by DATEPART(m, committime) desc";
+    //            SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+    //            //有多行数据，用while循环
+    //            while (getTotalCommitTimesReader.Read())
+    //            {
+    //                addNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+    //            }
+    //            //关闭查询
+    //            getTotalCommitTimesReader.Close();
+    //            conn.Close();
+    //            return addNumber;
+    //        }
+    //        //自然年查询
+    //        else
+    //        {
+    //            querySingleInfo.CommandText = " select top 2 DATEPART(yy,committime) as month, count(DATEPART(yy, committime)) as times from MemberCommit where DATEPART(yy, committime) >= (DATEPART(yy, getdate()) - 2) group by DATEPART(yy, committime) order by DATEPART(yy, committime) desc";
+    //            SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+    //            //有多行数据，用while循环
+    //            while (getTotalCommitTimesReader.Read())
+    //            {
+    //                addNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+    //            }
+    //            //关闭查询
+    //            getTotalCommitTimesReader.Close();
+    //            conn.Close();
+    //            return addNumber;
+    //        }
+    //    }
     }
 }
 

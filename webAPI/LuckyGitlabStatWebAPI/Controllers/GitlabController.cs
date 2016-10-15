@@ -27,6 +27,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <returns>是否插入成功</returns>
         public int PushEventInfo([FromBody]PushEvent push)
         {
+            bool flag = true;
             ProjectController project = new ProjectController();
             List<string> projectName = new List<string>();
             try
@@ -40,39 +41,41 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 IList<Project> namelist = project.GetAllProjectInfo();
                 foreach(var i in namelist)
                 {
-                    projectName.Add(i.projectName);
+                   //如果MemberProject表中已经存在该项目
+                    if (i.projectName.Contains(push.project.name)|| push.project.name.Contains(i.projectName))
+                        flag = false;
                 }
-                if (!projectName.Contains(push.project.name))
+                if (flag==true)
                 {
-                    sql = "INSERT INTO MemberProject(ProjectName,CommitTime，isdelete) VALUES ('" + push.project.name + "',getdate(),'0') ";
+                    sql = "INSERT INTO MemberProject(ProjectName,CommitTime,isdelete) VALUES ('" + push.project.name + "',getdate(),'0') ";
                     cmd = new SqlCommand(sql, conn);
                     result = cmd.ExecuteNonQuery();
                 }
-                else
-                {
-                    SqlCommand querySingleInfo = conn.CreateCommand();
-                    querySingleInfo.CommandText = "SELECT projectMembers FROM MemberProject where projectName=" + "'" + push.project.name + "'";
-                    SqlDataReader singleInfoReader = querySingleInfo.ExecuteReader();
-                    //有多行数据，用while循环
-                    while (singleInfoReader.Read())
-                    {
-                       username = singleInfoReader["projectMembers"].ToString().Trim();
-                    }
-                    if(!username.Contains(push.user_name))
-                    {
-                        sql = "update MemberProject set ProjectMembers=" + "ProjectMembers+'," + push.user_name + "'";
-                        cmd = new SqlCommand(sql, conn);
-                        result = cmd.ExecuteNonQuery();
-                    }
-                    //关闭查询
-                    singleInfoReader.Close();
-                }
+                //else
+                //{
+                //    SqlCommand querySingleInfo = conn.CreateCommand();
+                //    querySingleInfo.CommandText = "SELECT projectMembers FROM MemberProject where projectName=" + "'" + push.project.name + "'";
+                //    SqlDataReader singleInfoReader = querySingleInfo.ExecuteReader();
+                //    //有多行数据，用while循环
+                //    while (singleInfoReader.Read())
+                //    {
+                //       username = singleInfoReader["projectMembers"].ToString().Trim();
+                //    }
+                //    if(!username.Contains(push.user_name))
+                //    {
+                //        sql = "update MemberProject set ProjectMembers=" + "ProjectMembers+'," + push.user_name + "'";
+                //        cmd = new SqlCommand(sql, conn);
+                //        result = cmd.ExecuteNonQuery();
+                //    }
+                //    //关闭查询
+                //    singleInfoReader.Close();
+                //}
                 conn.Close();
                 return result;
             }
             catch (Exception e)
             {
-                FileStream fs = new FileStream("c:\\log.txt", FileMode.Append, FileAccess.Write);
+                FileStream fs = new FileStream("c:\\test\\log.txt", FileMode.Append, FileAccess.Write);
                 StreamWriter sw = new StreamWriter(fs); // 创建写入流
                 sw.WriteLine(e.ToString()); // 写入
                 sw.Close();

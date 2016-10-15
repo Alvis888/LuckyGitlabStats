@@ -20,13 +20,13 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <summary>
         /// 用户级别，默认最高
         /// </summary>
-        int rank=1;
+        int rank = 1;
         bool flag = false;
         //用于项目名查重
-        IList<Project> projectList= new List<Project>();
+        IList<Project> projectList = new List<Project>();
         //项目成员提交量
         Dictionary<string, int> MembersPushMember = new Dictionary<string, int>();
-         //连接本地数据库
+        //连接本地数据库
         ConnectLocalSQL connectLocaldb = new ConnectLocalSQL();
         public ProjectController()
         {
@@ -34,7 +34,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
              Empty
              */
         }
-        
+
         /// <summary>
         /// 获取所有项目
         /// </summary>
@@ -58,7 +58,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 project.projectMonitor = getTotalCommitTimesReader["projectmonitor"].ToString().Trim();
                 project.projectMembers = getTotalCommitTimesReader["projectMembers"].ToString().Trim();
                 project.groupName = getTotalCommitTimesReader["groupname"].ToString().Trim();
-                project.isDelete =bool.Parse( getTotalCommitTimesReader["isdelete"].ToString().Trim());
+                project.isDelete = bool.Parse(getTotalCommitTimesReader["isdelete"].ToString().Trim());
                 projectName.Add(project);
             }
             projectList = projectName.Distinct().ToList();
@@ -91,7 +91,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 while (getTotalCommitTimesReader.Read())
                 {
                     string monitor = getTotalCommitTimesReader["ProjectMonitor"].ToString().Trim();
-                    string member= getTotalCommitTimesReader["ProjectMembers"].ToString().Trim();
+                    string member = getTotalCommitTimesReader["ProjectMembers"].ToString().Trim();
                     if (monitor != "")
                         monitor += ',';
                     if (member.StartsWith(","))
@@ -156,9 +156,9 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <param name="projectname"></param>
         /// <param name="querydays"></param>
         /// <returns></returns>
-        public Tuple<Dictionary<string, int>, string> GetMembersPushNumberOfProject(string projectname,int querydays )
+        public Tuple<Dictionary<string, int>, string> GetMembersPushNumberOfProject(string projectname, int querydays)
         {
-            string returnInfo="";
+            string returnInfo = "";
             SingleController single = new SingleController();
             IList<string> projectMember = new List<string>();
             projectMember = GetProjectMembersName(projectname);
@@ -214,21 +214,21 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// <param name="username"></param>
         /// <param name="projectname"></param>
         /// <returns></returns>
-        public int  GetProjectRank(string username,string projectname)
+        public int GetProjectRank(string username, string projectname)
         {
             SqlConnection conn = connectLocaldb.ConnectDataBase();
             conn.Open();
             SqlCommand cmd = conn.CreateCommand();
             cmd.CommandText = "select monitor,projectMembers from Project where projectName=" + "'" + projectname + "'";
             SqlDataReader read = cmd.ExecuteReader();
-            while(read.Read())
+            while (read.Read())
             {
                 string monitor = read["monitor"].ToString().Trim();
                 if (monitor.Contains(username))
-                    rank= 2;
+                    rank = 2;
                 string projectMember = read["projectMembers"].ToString().Trim();
                 if (projectMember.Contains(username))
-                    rank= 3;
+                    rank = 3;
             }
             conn.Close();
             return rank;
@@ -238,7 +238,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// </summary>
         /// <param name="project"></param>
         /// <returns></returns>
-        public string GetUpdateProject(string projectName,string projectMonitor,string projectMembers,string groupName)
+        public string GetUpdateProject(string projectName, string projectMonitor, string projectMembers, string groupName)
         {
             string info = "";
             try
@@ -260,7 +260,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
                 sw.Close();
                 info += "更新异常";
             }
-            
+
             return info;
         }
         /// <summary>
@@ -325,7 +325,7 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// </summary>
         /// <param name="queryDays">查询天数</param>
         /// <returns>总次数</returns>
-        public int GetBuildTotalOfProject_ByLongTime(string projectname,int queryDays)
+        public int GetBuildTotalOfProject_ByLongTime(string projectname, int queryDays)
         {
             queryDays--;
             int total = 0;//提交总次数
@@ -426,9 +426,9 @@ namespace LuckyGitlabStatWebAPI.Controllers
         /// 获取每天提交次数
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string,int> GetCommitNumber_bylongtime(string projectname, int queryDays)
+        public Dictionary<string, int> GetCommitNumber_bylongtime(string projectname, int queryDays)
         {
-             queryDays--;
+            queryDays--;
             Dictionary<string, int> commitList = new Dictionary<string, int>();
             //连接本地数据库
             SqlConnection conn = connectLocaldb.ConnectDataBase();
@@ -436,14 +436,14 @@ namespace LuckyGitlabStatWebAPI.Controllers
             conn.Open();
             //创建查询语句
             SqlCommand querySingleInfo = conn.CreateCommand();
-            querySingleInfo.CommandText = "select CONVERT(varchar(12), Committime, 111) as date, COUNT( CONVERT(varchar(12), Committime, 111)) as times from membercommitbeforecompiling where DATEADD(d,-"+queryDays + ", CONVERT(varchar(12), getdate(), 111)) <= CONVERT(varchar(12), Committime, 111) and projectname=" + "'" + projectname + "' group by CONVERT(varchar(12), Committime, 111) order by CONVERT(varchar(12), Committime, 111) desc";
+            querySingleInfo.CommandText = "select CONVERT(varchar(12), Committime, 111) as date, COUNT( CONVERT(varchar(12), Committime, 111)) as times from membercommitbeforecompiling where DATEADD(d,-" + queryDays + ", CONVERT(varchar(12), getdate(), 111)) <= CONVERT(varchar(12), Committime, 111) and projectname=" + "'" + projectname + "' group by CONVERT(varchar(12), Committime, 111) order by CONVERT(varchar(12), Committime, 111) desc";
             SqlDataReader singleInfoReader = querySingleInfo.ExecuteReader();
             //有多行数据，用while循环
             while (singleInfoReader.Read())
             {
                 string date = singleInfoReader["date"].ToString().Trim();
                 int number = int.Parse(singleInfoReader["times"].ToString().Trim());
-                commitList.Add(date,number);
+                commitList.Add(date, number);
             }
             //关闭查询
             singleInfoReader.Close();
@@ -507,5 +507,234 @@ namespace LuckyGitlabStatWebAPI.Controllers
             conn.Close();
             return buildSuccessList;
         }
+
+
+
+        /// <summary>
+        /// 获取自然周、自然月、自然年的提交次数(以及上周期)
+        /// </summary>
+        /// <param name="queryDays"></param>
+        /// <returns></returns>
+        public Tuple<Dictionary<int, int>, Dictionary<int, int>> GetProjectCommit_Weekly_Monthly_Yearly(string projectName,int queryDays)
+        {
+            Dictionary<int, int> memberCommitOnce = new Dictionary<int, int>();
+            Dictionary<int, int> memberCommitTwice = new Dictionary<int, int>();
+            int queryKey;
+            int commitNumber;
+            SqlConnection conn = connectLocaldb.ConnectDataBase();
+            //打开数据库
+            conn.Open();
+            //创建查询语句
+            SqlCommand querySingleInfo = conn.CreateCommand();
+            //自然周查询
+            if (queryDays == 7)
+            {
+                querySingleInfo.CommandText = "SET DATEFIRST 1 select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommitBeforeCompiling where DATEPART(wk, committime) = DATEPART(wk, getdate()) and projectName like'%" + projectName + "%' group by DATEPART(w, committime)";
+                SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["weekday"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitOnce.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+
+                querySingleInfo.CommandText = "SET DATEFIRST 1 select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommitBeforeCompiling where DATEPART(wk, committime) = (DATEPART(wk, getdate())-1) and projectName like'%" + projectName + "%' group by DATEPART(w, committime)";
+                getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["weekday"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitTwice.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+                Tuple<Dictionary<int, int>, Dictionary<int, int>> tupleCommit = new Tuple<Dictionary<int, int>, Dictionary<int, int>>(memberCommitOnce, memberCommitTwice);
+                conn.Close();
+                return tupleCommit;
+            }
+            //自然月查询
+            if (queryDays == 30)
+            {
+                querySingleInfo.CommandText = "select DATEPART(d,committime) as day,count(DATEPART(d,committime)) as times from MemberCommitBeforeCompiling where DATEPART(m, committime) = (DATEPART(m, getdate())) and projectName like'%" + projectName + "%' group by DATEPART(d, committime)order by day asc";
+                SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["day"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitOnce.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+
+                querySingleInfo.CommandText = "  select DATEPART(d,committime) as day,count(DATEPART(d,committime)) as times from MemberCommitBeforeCompiling where DATEPART(m, committime) = (DATEPART(m, getdate())-1) and projectName like'%" + projectName + "%' group by DATEPART(d, committime)order by day asc";
+                getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["day"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitTwice.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+                Tuple<Dictionary<int, int>, Dictionary<int, int>> tupleCommit = new Tuple<Dictionary<int, int>, Dictionary<int, int>>(memberCommitOnce, memberCommitTwice);
+                conn.Close();
+                return tupleCommit;
+            }
+            //自然年查询
+            else
+            {
+                querySingleInfo.CommandText = "  select DATEPART(m,committime) as month,count(DATEPART(m,committime)) as times from MemberCommitBeforeCompiling where DATEPART(yy, committime) = DATEPART(yy, getdate()) and projectName like'%" + projectName + "%' group by DATEPART(m, committime) order by DATEPART(m, committime)desc";
+                SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["month"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitOnce.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+
+                querySingleInfo.CommandText = "  select DATEPART(m,committime) as month,count(DATEPART(m,committime)) as times from MemberCommitBeforeCompiling where DATEPART(yy, committime) = (DATEPART(yy, getdate())-1) and projectName like'%" + projectName + "%' group by DATEPART(m, committime) order by DATEPART(m, committime)desc";
+                getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["month"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitTwice.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+                Tuple<Dictionary<int, int>, Dictionary<int, int>> tupleCommit = new Tuple<Dictionary<int, int>, Dictionary<int, int>>(memberCommitOnce, memberCommitTwice);
+                conn.Close();
+                return tupleCommit;
+            }
+        }
+
+        /// <summary>
+        /// 获取自然周、自然月、自然年的编译次数(以及上周期)
+        /// </summary>
+        /// <param name="queryDays"></param>
+        /// <returns></returns>
+        public Tuple<Dictionary<int, int>, Dictionary<int, int>> GetProjectBuild_Weekly_Monthly_Yearly(string projectName, int queryDays)
+        {
+            Dictionary<int, int> memberCommitOnce = new Dictionary<int, int>();
+            Dictionary<int, int> memberCommitTwice = new Dictionary<int, int>();
+            int queryKey;
+            int commitNumber;
+            SqlConnection conn = connectLocaldb.ConnectDataBase();
+            //打开数据库
+            conn.Open();
+            //创建查询语句
+            SqlCommand querySingleInfo = conn.CreateCommand();
+            //自然周查询
+            if (queryDays == 7)
+            {
+                querySingleInfo.CommandText = "SET DATEFIRST 1 select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommit where DATEPART(wk, committime) = DATEPART(wk, getdate()) and projectName like'%" + projectName + "%' group by DATEPART(w, committime)";
+                SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["weekday"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitOnce.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+
+                querySingleInfo.CommandText = "SET DATEFIRST 1 select DATEPART(w,committime) as weekday,count(DATEPART(w,committime)) as times from MemberCommit where DATEPART(wk, committime) = (DATEPART(wk, getdate())-1) and projectName like'%" + projectName + "%' group by DATEPART(w, committime)";
+                getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["weekday"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitTwice.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+                Tuple<Dictionary<int, int>, Dictionary<int, int>> tupleCommit = new Tuple<Dictionary<int, int>, Dictionary<int, int>>(memberCommitOnce, memberCommitTwice);
+                conn.Close();
+                return tupleCommit;
+            }
+            //自然月查询
+            if (queryDays == 30)
+            {
+                querySingleInfo.CommandText = "select DATEPART(d,committime) as day,count(DATEPART(d,committime)) as times from MemberCommit where DATEPART(m, committime) = (DATEPART(m, getdate())) and projectName like'%" + projectName + "%' group by DATEPART(d, committime)order by day asc";
+                SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["day"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitOnce.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+
+                querySingleInfo.CommandText = "  select DATEPART(d,committime) as day,count(DATEPART(d,committime)) as times from MemberCommit where DATEPART(m, committime) = (DATEPART(m, getdate())-1) and projectName like'%" + projectName + "%' group by DATEPART(d, committime)order by day asc";
+                getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["day"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitTwice.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+                Tuple<Dictionary<int, int>, Dictionary<int, int>> tupleCommit = new Tuple<Dictionary<int, int>, Dictionary<int, int>>(memberCommitOnce, memberCommitTwice);
+                conn.Close();
+                return tupleCommit;
+            }
+            //自然年查询
+            else
+            {
+                querySingleInfo.CommandText = "  select DATEPART(m,committime) as month,count(DATEPART(m,committime)) as times from MemberCommit where DATEPART(yy, committime) = DATEPART(yy, getdate()) and projectName like'%" + projectName + "%' group by DATEPART(m, committime) order by DATEPART(m, committime)desc";
+                SqlDataReader getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["month"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitOnce.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+
+                querySingleInfo.CommandText = "  select DATEPART(m,committime) as month,count(DATEPART(m,committime)) as times from MemberCommit where DATEPART(yy, committime) = (DATEPART(yy, getdate())-1) and projectName like'%" + projectName + "%' group by DATEPART(m, committime) order by DATEPART(m, committime)desc";
+                getTotalCommitTimesReader = querySingleInfo.ExecuteReader();
+                //有多行数据，用while循环
+                while (getTotalCommitTimesReader.Read())
+                {
+                    queryKey = int.Parse(getTotalCommitTimesReader["month"].ToString().Trim());
+                    commitNumber = int.Parse(getTotalCommitTimesReader["times"].ToString().Trim());
+                    memberCommitTwice.Add(queryKey, commitNumber);
+                }
+                //关闭查询
+                getTotalCommitTimesReader.Close();
+                Tuple<Dictionary<int, int>, Dictionary<int, int>> tupleCommit = new Tuple<Dictionary<int, int>, Dictionary<int, int>>(memberCommitOnce, memberCommitTwice);
+                conn.Close();
+                return tupleCommit;
+            }
+        }
+
+
+
+
+
+
+
+
+
+       
     }
 }
+
