@@ -56,6 +56,7 @@ export default React.createClass({
             async: false,
             dataType:'json',
             success: function (data) {
+                projectNumber = 0;
                 for(var i = 0; i < data.length; i++){
                     if(data[i].isDelete == false){
                         projectNumber++;
@@ -74,6 +75,7 @@ export default React.createClass({
             async: false,
             dataType:'json',
             success: function (data) {
+                groupNumber = 0;
                 for(var i = 0; i < data.length; i++){
                     if(data[i].isDelete == false){
                         groupNumber++;
@@ -92,12 +94,12 @@ export default React.createClass({
             async: false,
             dataType:'json',
             success: function (data) {
+                userNumber = 0;
                 for(var i = 0; i < data.length; i++){
                     if(data[i].isdelete == 'False'){
                         userNumber++;
                     }
                 }
-                console.log('userNumber: '+userNumber);
             },
             error : function() {
                 alert("failed to get user number in MainPage!");
