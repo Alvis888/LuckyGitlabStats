@@ -36,14 +36,16 @@
     width: 1080px;
     height: 0px;
     margin-top: -30px;
-    margin-left: 140px;
+    margin-left: auto;
+    margin-right: auto;
     border:0.5px solid rgba(0,0,0,0.2);
 }
 .mainPage_divide{
     width: 1080px;
     height: 0px;
     margin-top: 20px;
-    margin-left: 140px;
+    margin-left: auto;
+    margin-right: auto;
     border:0.5px solid rgba(0,0,0,0.2);
 }
 .mainPage_text{
@@ -62,12 +64,14 @@
     padding-left: 90px;
     width: 1200px;
     height: 340px;
+    margin-left: auto;
+    margin-right: auto;
 }
 .mainPage_partOnePaper{
     height: 250px;
     width: 300px;
     background-color: #FFFFFF;
-    margin-left: 68px;
+    margin-left: 52px;
     margin-top: 15px;
     box-shadow:  0 0 7px rgba(0,0,0,.14),0 7px 15px rgba(0,0,0,.23);
     float: left;
@@ -77,9 +81,9 @@
     height: 280px;
     width: 250px;
     background-color: #FFFFFF;
-    margin-left: 90px;
+    margin-left: 43px;
     margin-top: 40px;
-    box-shadow:  0 0 7px rgba(0,0,0,.14),0 7px 15px rgba(0,0,0,.23);
+    box-shadow: 0 0 7px rgba(0,0,0,.14),0 7px 15px rgba(0,0,0,.23);
     float: left;
     white-space:nowrap;
 }
@@ -97,9 +101,7 @@
     background: #ffffff;
     width: 800px;
     height: 400px;
-    margin-top: 40px;
-    margin-left: 270px;
-    margin-bottom: 40px;
+    margin: 40px auto 40px 160px;
     box-shadow: 0px 0px 1px rgba(0,0,0,0.1), 0px 2px 1px rgba(0,0,0,0.1);
 }
 .mainPage_type{

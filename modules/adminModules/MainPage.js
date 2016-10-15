@@ -380,7 +380,9 @@ export default React.createClass({
                     <div className="mainPage_barChart"><IssueChart/></div>
                 </div>
                 <div className="mainPage_divide"></div>
-                <div className="mainPage_horizontalBarChart"></div>
+                <div className="mainPage_part">
+                    <div className="mainPage_horizontalBarChart"></div>
+                </div>
             </div>
         )
     }
